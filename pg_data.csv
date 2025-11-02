@@ -1,33 +1,228 @@
-Name,Type,Gender,Location,Sharing,"Cost (₹)","Food Quality (/5)",Parking,"Room Space","Electricity Bill","Overall Rating (/5)",Comments,Contributor,Phone
-"Regal Vista Co Living",Co-Living,Male & Female,Madhapur,Triple,12000,3,2-Wheeler,Spacious,Included,4,"Router Placement was not giving range in some rooms. Every floor has a huge lobby and pool table on the ground floor.",Anonymous,
-"SGS Elite Luxury PG for Mens",PG,Male Only,Kondapur,Two,12000,2,"2-Wheeler (Congested)",Cramped,Included,3,"Wifi is good. Rooms are small but a good budget-friendly option.",Anonymous,
-"Mourya Gents PG",PG,Male Only,Gachibowli,Four,8000,4,2-Wheeler,Average,Separate,4,"Nothing major. Few rooms have balconies that cost 8k, rooms without a balcony cost 7.5k.",Anonymous,
-"Tarun sai mens deluxe hostel",Hostel,Male Only,"Madhura nagar",Triple,7500,2,"No Parking",Cramped,Included,2,"It’s kinda mass, don’t recommend at all.",Anonymous,
-"GR Grand-2 Womens Stay",PG,Female Only,Madhapur,Triple,9500,4,2-Wheeler,Average,Separate,4,"GYM included.",Anonymous,
-"Agasthya Executive PG for Boyz & Men",PG,Male Only,Narayanguda,Triple,8500,3,2-Wheeler,Average,Included,3,"Pros: Decent Wi-Fi, good security, great location (10-min walk to Metro), tasty veg food. Can cook your own veg meals. Cons: Only one bathroom and one washing machine for the entire hostel.",Anonymous,
-"New Leo Grand PG",Co-Living,Male & Female,Kondapur,Two,16000,2,2-Wheeler,Average,Included,4,"Free wifi, some indoor games, close to masjidbanda. PG itself was very neat and clean.",Anonymous,
-"Safe Nest Co-Living & Mens PG hostel",Co-Living,Male & Female,Gachibowli,Two,8800,3,2-Wheeler,Average,Separate,3,,Anonymous,
-"KARTHIKEYA DELUXE MENS PG",PG,Male Only,Gachibowli,Triple,8500,4,2-Wheeler,Average,Separate,5,"Good maintenance, great ventilation.","u/Re-ne-ra",
-"Home (Babai Premium co-living space)",Co-Living,Male & Female,Gachibowli,Triple,10500,3,2-Wheeler,Average,Included,4,,Anonymous,
-"IT living premium stays",Co-Living,Male & Female,Gachibowli,Four,8333,2,"2-Wheeler (Congested)",Cramped,Separate,3,"wifi speed is okay, the place is very near to keka, deloitte and other major mnc's well that's the only perk i see for the place.",Anonymous,
-"Happy homes men's hostel",Hostel,Male Only,Kondapur,Two,11000,3,"2-Wheeler (Congested)",Average,Included,3,,Anonymous,
-"TIRUMALA MENS PG ACCOMODATIONS",PG,Male Only,Khajaguda,Triple,7000,4,2-Wheeler,Average,Included,4,"Wifi connectivity is good, food is average, near to public transport.",Anonymous,
-"NKR luxury mens pg",PG,Male Only,Kondapur,Triple,8500,4,2-Wheeler,Average,Included,4,,Anonymous,
-"SP Grand Men PG",PG,Male Only,Madhapur,Two,12000,3,2-Wheeler,Average,Separate,3,"Very close to metro and e-galleria mall. Food is not great. Some rooms are big and some are avg for the same rent.",Anonymous,9100580404
-"Lavish Livings colive",Co-Living,Male & Female,Madhapur,Two,15000,4,2-Wheeler,Average,Included,5,"Cons: Just that the mobile signals are not good.",Anonymous,9885741999
-"B.S. Boys Hostel (myneni appartments)",Hostel,Male Only,Begumpet,Four,8500,3,2-Wheeler,Average,Included,4,"Near to Begumpet metro.",Anonymous,8555009137
-"Happy homes 3rd branch",Hostel,Male Only,Kokapet,Four,7000,2,"2-Wheeler (Congested)",Spacious,Included,3,"Wi-Fi is way good that's the only reason I'm here.",Anonymous,9052751778
-"sri krishna varahi boys hostel",Hostel,Male Only,Madhapur,Four,7000,3,"2-Wheeler (Congested)",Cramped,Included,3,"wifi speed is good, food is okay, its just 100 meters to durgam cheruvu metro.",Anonymous,7989874729
-"Ayaan Dev Women PG",PG,Female Only,"TNGO Colony",Triple,9000,2,2-Wheeler,Spacious,Separate,3,"Breakfast is south indian, lunch is rice with some curry or dal, dinner has chapati curry rice. Near 'indian bazar home appliance'.",Anonymous,9502388666
-"Venkateswara Hostels",Hostel,Male Only,Gowlidoddy,Four,7500,3,2-Wheeler,Cramped,Included,3,"Food hygiene is slightly below average. Wifi works fine. Security is passable. Fridges on every floor; three washing machines. 4 sharing is too cramped. Had cockroach and bed bug issues.",Anonymous,9951325136
-"Elite hostel for men",Hostel,Male Only,Dilsukhnagar,Four,6600,4,2-Wheeler,Average,Included,4,"Very close to chaitanyapuri metro station (<100m).",esh0007,9647327968
-"Regal Vistas CoLiving",Co-Living,Male & Female,Madhapur,Two,15000,4,2-Wheeler,Spacious,Included,5,"Food is Good, Zepto warehouse is just beside. Only con is - only Airtel has good signal.",Anonymous,7207369966
-"Exotica - Premium Living for Women",PG,Female Only,Kondapur,Two,16500,4,"2 & 4 Wheeler",Average,Separate,4,"Single share also available. Pros: Gym & Play Area, Lounge Area, Self Kitchen in Cafeteria, Fingerprint/Access Card Security. Cons: Sometimes Wi-Fi speed can be slow.",Anonymous,9088956789
-"Asian Buzz PG",Co-Living,Male & Female,Gowlidoddy,Two,16000,3,2-Wheeler,Average,Separate,3,,Anonymous,9581553070
-"Sri Kanaka Durga Luxury Men's PG",PG,Male Only,Kukatpally,Two,10000,2,2-Wheeler,Spacious,Included,3,"CCTV, Television, Good wifi speed, Nearby JNTU metro.",Anonymous,9000596431
-"Vihari grand coliving",Co-Living,Male & Female,Madhapur,Two,15000,3,2-Wheeler,Spacious,Included,4,"Located in Ayyappa society, great locality. Transport available. Food is okayish. Rooms are spacious. Gym is available.",Anonymous,7989425496
-"Vihari prime coliving",Co-Living,Male & Female,Kondapur,Two,15000,4,2-Wheeler,Average,Included,4,,Anonymous,7989425496
-"Stanza Living Lublin House",Hostel,Male Only,Maisammaguda,Triple,8900,3,"4-Wheeler",Spacious,Included,2,"House maintenance is horrible. You have to do your own cleaning due to lack of workers and reckless management. The only option for students in nearby colleges.",SwimmingMix1064,8046007444
-"VN Luxury PG",Co-Living,Male & Female,Gowlidoddy,Triple,8500,3,"2-Wheeler (Congested)",Spacious,Included,4,,Anonymous,9492123875
-"Regal Vista Co Living",Co-Living,Male & Female,Madhapur,Single,25000,4,2-Wheeler,Spacious,Included,4,"Lunch is fixed (daal chawal). Rent is for NON-AC. For AC, it's 30k. Close to 100ft road with many eateries. Huge common space. Good Wifi.",Anonymous,7207369966
-"Urban Castle (Alpha) Mens PG",PG,Male Only,Adibatla,Triple,7000,3,"2-Wheeler (Congested)",Spacious,Included,4,"Good Wifi speed and food is good most of the times. Thick buttermilk provided.",Anonymous,9441962896
+Timestamp,Name of PG/Hostel: ,Type of PG,🌍 Location:,🏡Type of Sharing:,💰 Monthly Cost (₹): ,🍴 Food Quality: ,🚲Parking Space,🏢 Room Space:,⚡Electricity Bill:,Overall Rating: ,Additional Comments: ,Contributor Reddit Username,PG Owner Phone number,Contributor Gender
+8/22/2025 9:41:32,Regal Vista Co Living,Co Living ( Male & Female both),Madhapur,Triple Sharing,12000,3,2-Wheeler,Spacious,Included in rent,4,"Router Placement was not giving range in some rooms , In every floor has a huge lobby and pool table in ground floor ",Anonymous,,
+8/22/2025 9:44:28,SGS Elite Luxury PG for Mens,Male Only,Kondapur,Two Sharing,12000,2,"2 Wheeler Parking (Very Less space, Congested)",Cramped,Included in rent,3,"Wifi is good, Rooms are small but if anyone needs budget friendly option is good. ",Anonymous,,
+8/22/2025 11:18:39,Mourya Gents PH,Male Only,Gachibowli,Four Sharing,8000,4,2-Wheeler,Average,Separate bill,4,"Nothing major, few rooms have balconies that costs 8k, rooms without balcony costs 7.5  k",Anonymous,,
+8/22/2025 11:38:31,Tarun sai mens deluxe hostel ,Male Only,Madhura nagar,Triple Sharing,7500,2,No Parking,Cramped,Included in rent,2,It’s kinda mass don’t recommend at all,Anonymous,,
+8/22/2025 11:39:15,GR Grand-2 Womens Stay,Female Only,Madhapur,Triple Sharing,9500,4,2-Wheeler,Average,Separate bill,4,GYM included,Anonymous,,
+8/22/2025 12:08:15,Agasthya Executive PG for Boyz & Men,Male Only,Narayanguda ,Triple Sharing,8500,3,2-Wheeler,Average,Included in rent,3,"Pros:
+* The Wi-Fi speed is decent, though it can vary by room.
+* Security is good.
+* The location is great—just a 10-minute walk from Narayanaguda Metro Station.
+* The food is tasty (though no non-veg options). You can cook your own meals if you want, though non-veg cooking is not allowed in the kitchen. You can bring non-veg food from outside but must clean up afterward.
+* They provide an induction stove, vessels, salt, and a fridge for your use.
+* There's an open space in front, as seen on Google Maps.
+
+Cons:
+* Only one bathroom and 
+* Only one washing machine for the entire hostel.",Anonymous,,
+8/22/2025 12:17:47,New Leo Grand PG,Co Living ( Male & Female both),Kondapur,Two Sharing,16000,2,2-Wheeler,Average,Included in rent,4,"Free wifi, some indoor games, close to masjidbanda. PG itself was very neat and clean.",Anonymous,,
+8/22/2025 12:25:45,Safe Nest Co-Living & Mens PG hostel,Co Living ( Male & Female both),Gachibowli,Two Sharing,8800,3,2-Wheeler,Average,Separate bill,3,,Anonymous,,
+8/22/2025 12:51:00,KARTHIKEYA DELUXE MENS PG,Male Only,Gachibowli,Triple Sharing,8500,4,2-Wheeler,Average,Separate bill,5,"Good maintanance, great ventilation",u/Re-ne-ra,,
+8/22/2025 13:08:39,Home (Babai Premium co-living space),Co Living ( Male & Female both),Gachibowli,Triple Sharing,10500,3,2-Wheeler,Average,Included in rent,4,,Anonymous,,
+8/22/2025 13:34:28,IT living premium stays,Co Living ( Male & Female both),Gachibowli,Four Sharing,8333,2,"2 Wheeler Parking (Very Less space, Congested)",Cramped,Separate bill,3,"wifi speed is okay, the place is very near to keka,deloitte and other major mnc's well thats the only perk i see for the place.",Anonymous,,
+8/22/2025 14:14:17,Happy homes men's hostel ,Male Only,Kondapur,Two Sharing,11000,3,"2 Wheeler Parking (Very Less space, Congested)",Average,Included in rent,3,,Anonymous,,
+8/22/2025 15:04:45,TIRUMALA MENS PG ACCOMODATIONS,Male Only,Khajaguda ,Triple Sharing,7000,4,2-Wheeler,Average,Included in rent,4,"Wifi connectivity is good , food is average,near to public transport ",Anonymous,,
+8/22/2025 17:38:17,NKR luxury mens pg,Male Only,Kondapur,Triple Sharing,8500,4,2-Wheeler,Average,Included in rent,4,,Anonymous,,
+8/25/2025 14:05:22,SP Grand Men PG,Male Only,Madhapur,Two Sharing,12000,3,2-Wheeler,Average,Separate bill,3,Very close to metro and e-galleria mall. Food is not great. Some room are big and some are avg for the same rent. ,Anonymous,9100580404,
+8/25/2025 14:06:10,Lavish Livings colive,Co Living ( Male & Female both),Madhapur,Two Sharing,15000,4,2-Wheeler,Average,Included in rent,5,Cons: Just that the mobile signals are not good,Anonymous,09885741999,
+8/25/2025 14:47:23,B.S. Boys Hostel (myneni appartments on maps),Male Only,Begumpet,Four Sharing,8500,3,2-Wheeler,Average,Included in rent,4,Near to Begumpet metro,Anonymous,+918555009137,
+8/25/2025 15:22:04,Happy homes 3rd branch ,Male Only,Kokapet,Four Sharing,7000,2,"2 Wheeler Parking (Very Less space, Congested)",Spacious,Included in rent,3,Wi-Fi is way good that's the only reason I'm here. ,Anonymous,9052751778,
+8/25/2025 15:24:06,sri krishna varahi boys hostel,Male Only,Madhapur,Four Sharing,7000,3,"2 Wheeler Parking (Very Less space, Congested)",Cramped,Included in rent,3,"wifi speed is good , food is okay, its just 100 meters to durgam cheruvu metro (2nd street in that temple arch lane)",Anonymous,7989874729,
+8/25/2025 15:32:49,Ayaan Dev Women PG,Female Only,TNGO Colony,Triple Sharing,9000,2,2-Wheeler,Spacious,Separate bill,3,"Breakfast is south indian , lunch is rice with some curry or dal , dinner has chapati curry rice........it's near to google location ""indian bazar home appliance tngo colony""",Anonymous,9502388666,
+8/25/2025 23:17:08,Venkateswara Hostels AC and Non AC luxury Rooms Narasimha enclave plot no.18,Male Only,Gowlidoddy,Four Sharing,7500,3,2-Wheeler,Cramped,Included in rent,3,"Food itself is slightly above average but the hygiene is slightly below average. Wifi works fine. Security is passable with fingerprint lock on the main door.
+
+Regarding amenities, there are fridges on every floor; three washing machines (with one being out of order conforming with the tradition); nothing else to speak of.
+
+Public transportation is whatever city are buses available in Gowlidoddy; bikes, autos and cabs are always available.
+
+Pros: 3 sharing room should be good enough. It will be peaceful if roommates are peaceful.
+
+Cons: 4 sharing room is too cramped.
+
+Building is starting to show its age with wood beginning to rot.
+
+Had a cockroach infestation which we managed to control with Hit gel.
+
+Had bed bugs, which we tried to control by drying the mattresses, but I had left by this point.",Anonymous,9951325136,
+8/26/2025 8:55:57,Elite hostel for men,Male Only,Dilsukhnagar ,Four Sharing,6600,4,2-Wheeler,Average,Included in rent,4,Very close to chaitanyapuri metro station(<100m),esh0007,9647327968,
+8/26/2025 14:05:16,Regal Vista Co Living,Co Living ( Male & Female both),Madhapur,Two Sharing,15000,4,2-Wheeler,Spacious,Included in rent,5,"Food is Good, Zepto warehouse is just beside, Only con is - only Airtel has good signal. Rest all need to go to top floor",Anonymous,7207369966,
+8/26/2025 21:40:13,Exotica - Premium Living for Women. By ACTS Hospitality Services LLP,Female Only,Kondapur,Two Sharing,16500,4,2 & 4 Wheeler Parking,Average,Separate bill,4,"Single share also available
+
+Pros:
+Gym & Play Area Included
+Longue Area in each floor
+Self Kitchen in Cafeteria
+Security - Fingerprint/Access Card
+
+Cons:
+Sometimes Wi-Fi speed can be slow
+",Anonymous,9088956789,
+8/26/2025 22:20:26,Asian Buzz PG,Co Living ( Male & Female both),Gowlidoddy,Two Sharing,16000,3,2-Wheeler,Average,Separate bill,3,,Anonymous,+919581553070,
+8/27/2025 4:59:24,Sri Kanaka Durga Luxury Men's PG,Male Only,Kukatpally,Two Sharing,10000,2,2-Wheeler,Spacious,Included in rent,3,"CCTV, Telivision, Good wifi speed, Nearby JNTU metro",Anonymous,+919000596431,
+8/27/2025 11:28:11,Vihari grand coliving ,Co Living ( Male & Female both),Madhapur,Two Sharing,15000,3,2-Wheeler,Spacious,Included in rent,4,"Located in ayappa society , the locality around is very superior , you can get each and every thing you need . Transport is available too . 
+Food is okayish tho , not very great , not bad too . 
+Rooms are as spacious as one can be . 
+Gym is available 
+",Anonymous,7989425496,
+8/27/2025 11:29:20,Vihari prime coliving ,Co Living ( Male & Female both),Kondapur,Two Sharing,15000,4,2-Wheeler,Average,Included in rent,4,,Anonymous,7989425496,
+8/27/2025 14:11:20,"Stanza Living Lublin House, Maisammaguda",Male Only,Maisammaguda,Triple Sharing,8900,3,4-Wheeler,Spacious,Included in rent,2,"House maintenance is very horrible. If you had to stay here then don't expect them to clean them room, u have to do ur own cleaning because of lack of workers and their reckless management. If you are looking some hostel for male then you will find more horrible than this but not better, so this is the only option for the students studying in nearby colleges.",SwimmingMix1064,8046007444,
+8/27/2025 14:26:20,VN Luxury PG ,Co Living ( Male & Female both),Gowlidoddy,Triple Sharing,8500,3,"2 Wheeler Parking (Very Less space, Congested)",Spacious,Included in rent,4,,Anonymous,9492123875,
+8/27/2025 15:14:41,Regal Vista Co Living,Co Living ( Male & Female both),Madhapur,Single,25000,4,2-Wheeler,Spacious,Included in rent,4,"The lunch seems to be fixed; its daal chawal everyday. The rent specified here is for NON-AC, for AC single share its 30k, but you can submit the remote for the months you dont need and the price goes back to the standard NON-AC one. Its close to 100ft road, so ample amount of eateries in proximity, located close to swimming pools and gym.The common space is huge, every floor has a fridge, common TV with a sofa setting and a water dispenser. Wifi speed is decent. ",Anonymous,7207369966,
+8/27/2025 15:39:20,Urban Castle (Alpha) Mens PG,Male Only,Adibatla ,Triple Sharing,7000,3,"2 Wheeler Parking (Very Less space, Congested)",Spacious,Included in rent,4,Good Wifi speed and food is good for most of the times and a thick butter milk unlike the very watery buttermilk in place of curd.,Anonymous,9441962896,
+8/30/2025 21:52:32,Ira Women's PG,Female Only,Kukatpally,Two Sharing,9000,3,"2 Wheeler Parking (Very Less space, Congested)",Cramped,Included in rent,4,"Good enough wifi speed and there's a security uncle that stays at nights, there's small gym and bus stop is 200 meters away and metro is within 1 km. there are so many food zones within 1km radius.",Anonymous,+919030316747,
+8/30/2025 23:01:04,KSR Mens PG ,Male Only,Madhapur,Two Sharing,11000,1,No Parking,Cramped,Included in rent,2,"Pure south indian food everyday. Slow wifi, no security guard, no amenities. Only good thing is its location at this price point. ",Anonymous,9963850287,
+9/2/2025 22:13:23,Universe pg coliving,Co Living ( Male & Female both),Madhapur,Triple Sharing,9000,1,"2 Wheeler Parking (Very Less space, Congested)",Average,Included in rent,3,"For nine thousand they provide three sharing room with good Wi-Fi , gym , ev charging facility ",Anonymous,8499926777,
+9/3/2025 15:54:50,Nandu MensPG,Male Only,Hitec City,Two Sharing,16000,3,"2 Wheeler Parking (Very Less space, Congested)",Average,Separate bill,3,"No amenities
+They charge 16K for the room 9K as advance and 1500 as maintenance 
+So everymonth i pay nearly 16K+1500+1K-2K
+Total : 18-19,000",Anonymous,8885885041,
+9/4/2025 20:02:42,Aditya landmark (pg name- Laxmi Nivas),Female Only,Somjuguda,Triple Sharing,10000,3,4-Wheeler,Spacious,Included in rent,3,It is in a gated community ,Anonymous,7799375348,
+9/4/2025 21:05:21,Leonar Hotel,Co Living ( Male & Female both),Kokapet,Two Sharing,12000,5,4-Wheeler,Spacious,Included in rent,5,This is a hotel but they also have option for PG for well qualified individuals ,Anonymous,8185818777,
+9/4/2025 21:14:15,The Nest Hostel And PG Accommodation,Co Living ( Male & Female both),Uppal,Single,7000,4,4-Wheeler,Cramped,Included in rent,4,"Non veg-1-2times in a week, sometime wifi speed low, have to tell caretaker multiple times to fix any issue,  gym available in pg, near Nagole metro station ",Anonymous,8008701863,
+9/5/2025 9:47:36,Star pg single rooms ,Co Living ( Male & Female both),Madhapur,Single,21000,4,2-Wheeler,Cramped,Separate bill,5,"Fully furnished with ac sofa and fridge in the room,
+Very good looking rooms with every facility ",Anonymous,+918639569905,
+9/5/2025 14:55:04,The Nest Hostel And PG Accommodation,Co Living ( Male & Female both),Uppal,Single,13500,4,More two wheelers can be parked than four wheelers inside the premises but outside also space is there to park albeit on the road (it's not main road and has open spaces),Average,Included in rent,4,"Type of Premises:
+It is a Co-living PG consisting of 5 floors. One floor has rooms for senior citizens & couples, one floor has rooms for girls & women whereas other floors have rooms for boys & men.
+
+Address:
+Plot No 291, Aruna Nilayam ,Uppal Bhagayat, HMDA Layout Rd, Uppal, Hyderabad, Telangana 500039 .
+
+Landmarks:
+Nearby there is a 'Cricket net'. 'Nagole Metro Station' the first point of blue line is visible from two faces of premises and till Metro Station it is a 5-10 minutes walk. There is a small bus pickup point adjacent to Metro station just opposite to 'SVM Grand Hotel' on the service road side. 'DSL Virtue Mall' & 'DSL Workplace' is in Uppal. 'Uppal International Cricket Stadium' is also nearby. Near 'Uppal Arch' roads meet in + shape and here buses also stop (one can see the arch from the big skywalk starting from 'Uppal Metro Station'. One 'Gated Community', One 'KV School' and few government offices are also there in Uppal. 'Secunderabad Junction' can be reached after de-boarding in 'Hyderabad East Metro Station' and walking till some distance i.e. 5 minute walk after getting down near bus depo from metro premises. There is also originals of 'Blue Moon Hotel', 'Alpha Hotel' and 'Naturals Ice-Cream' in Secunderabad. Original 'Paradise Biryani' outlet is present which is somewhat near to the 'Paradise Metro Station'. 'JBS' has a big bus stand.
+Metro Map-
+Below is the metro map for reference purposes.
+https://st2.indiarailinfo.com/kjfdsuiemjvcya0/0/9/9/0/456990/14657461/5611975511347cd08747z.jpg .
+
+Public Transport:
+There are autos, bus pickup and dropoff points, metro stations and a main train station nearby. If one has to go to inside from the main road then there wouldn't be public transport. As compared to the public transport system in western parts like Pantancheruvu, Kondapur, Manikonda, etc and some southern parts of Hyderabad, it is much better.
+
+Drainage & Stormwater System:
+There is no such flooding problems because where this stay is located the roads get cleared of rainwater quickly.
+
+Street Lights:
+During night time if one has to walk till Metro Station, the roads leading to them can be dark with some danger from mainly dogs. Would suggest not to walk on these roads during night time for safety reasons.
+
+Parking:
+Parking can be done on the ground floor incase one has any vehicle. There is space for parking both four wheeler and two wheeler but there surely isn't a huge space or dedicated space for parking purpose.
+
+Main Flat layout:
+One common hall, one common bathroom & toilet along with one common kitchen is their for a series of main flats and the main flat is broken into two individual rooms in these main flats. 
+Other main flats don't have two individual rooms.
+
+Room Amenities:
+It has chair, shelves, attached bathroom & toilet, work desk, Geyser, AC.
+
+{
+Charges & Bills:
+- Rent Charges:
+1 sharing -> ₹ 13,500
+2 sharing -> ₹ 10,000
+3 sharing -> ₹ 7,000
+4 sharing -> No
+
+- Food type & Food charges:
+Food variations-
+On most of days South Indian food is cooked and on some days North Indian food is cooked. On Sunday there's non-veg cooked whereas there is an availability of certain fruits and salads on some days. Extra fee has to be paid for food. On some days cook might not come which is informed beforehand in the group. The food is served in basement.
+Food fee charges-
+There are package options which include the number of days of food service one wants to avail and how many times in a day for the number of days combination selected one wants to avail this service. The price can vary from ₹2000 to ₹3500.
+
+- Electricity Bill:
+Based on number of units used and the corresponding cost, the bill may be cleared by management or may be asked to be charged to the tenant. (If low on budget or with a fixed budget, one might have to use AC, Geyser, etc like heavy power consuming appliances judiciously).
+Wi-Fi Speed:
+For each flat a Wi-Fi router is provided and there are many minimal Wi-Fi problems.
+
+- Maintenance Charges:
+No separate charges of this kind. Cleaning of common areas alongside tenant rooms is done and collection of garbage is done on 6 out of 7 days by staff assigned by the management.
+
+- Security Deposit:
+A ₹5000 security deposit payment has to be done at the time of enrolling for room accommodation. Minimum of 2 weeks before leaving, a notice has to be given to both the caretaker and owner. Based on when the tenant gave leave notice and after inspection of the condition of room which one stayed in, the security deposit amount might be adjusted and returned back.
+}
+
+Staff & Contact:
+The name of the caretaker person is Mr. Arune (+91 9542365971). The name of the owner is Mr. Vijay (+91 8008701863). The website is https://theneststay.in/. There's a WhatsApp group as well where the updates related to any events/issues are given. In case facing any problem/problems and want to get it/them resolved, have to lodge complaint in an app (fields include explaining all the details regarding the problem and selecting a day and timing based on your availability for smooth resolution of the issue); the other alternative is you also let the caretaker know that a complaint was raised so that he can contact the technicians, etc directly. 
+
+Security:
+CCTV was present from the starting in ground floor, recently though CCTV cameras were installed on all floors. Don't expect 100% guarded personnel, the PG caretaker sometimes stays in ground floor to check for anyone entering but it's not a guarantee as he may go out or stay in his room the other times. There are other temporary staff as well who come in to premises and perform the caretaker's tasks when the caretaker is out of premises for long duration of time.
+
+Amenities:
+Other than three 'Washing Machines' and 'Cloth hanging threads' on terrace which come under minor amenities, there aren't any major amenities as of my knowledge at the time of leaving.
+
+-----------------------------------------------------------------------------------------------------------------------------------------------
+[
+Verdict: (4/5)
+It's good and didn't face too many problems while residing here. When facing problems and brought to their notice, they resolved it quickly. Everything happened in an organised and timely manner when staying there. No major complaints as of such.
+]
+-------------------------------------------------------------------------------------------------------------------------------------------------",ComprehensivePie3081,+918008701863,
+9/6/2025 8:07:11,Aparaajitha Padmarao nagar,Female Only,Padmarao nagar,Triple Sharing,12850,4,2-Wheeler,Spacious,Included in rent,4,,Anonymous,9849799709,
+9/7/2025 2:10:51,Lotus co-living madhapur,Co Living ( Male & Female both),Madhapur,Two Sharing,12500,3,"2 Wheeler Parking (Very Less space, Congested)",Average,Included in rent,3,All included. Good locality,Anonymous,8500282719,
+9/7/2025 21:54:01,Elysian Coliving,Co Living ( Male & Female both),Madhapur,Two Sharing,16000,3,2-Wheeler,Average,Separate bill,5,,Anonymous,9088373839,
+9/8/2025 7:32:29,Isha coliving,Co Living ( Male & Female both),Indira Nagar,Two Sharing,15000,3,2-Wheeler,Average,Separate bill,3,All amenities are available in immediate surroundings,Stupefy_me,9989364345,
+9/9/2025 19:01:20,Sri Sai surya luxury mens pg,Male Only,Gachibowli,Four Sharing,6500,3,2-Wheeler,Spacious,Separate bill,4,,Anonymous,9573653799,
+9/10/2025 22:28:30,Nandu mens PG ,Male Only,Hitec City,Triple Sharing,15000,3,2-Wheeler,Average,Included in rent,3,,Anonymous,9705326054,
+9/11/2025 2:44:25,Sri sai nilayam mens pg,Male Only,Hitec City,Four Sharing,8.5,4,2-Wheeler,Spacious,Included in rent,5,"Food is good, good maintainable, no gym , friendly staff ",Anonymous,6305822967,
+9/14/2025 2:16:00,Sai rama men's PG,Male Only,JNTU,Triple Sharing,7500,4,"2 Wheeler Parking (Very Less space, Congested)",Cramped,Included in rent,4,"Food is the best part, the hostel is somewhat congested but they are compensating with the food. Owner's parents only cook the food, they also eat the same food. Owner is very friendly. I never had wifi issues since last 1.5 years. Hot water 24/7. But very congested I tell you",/u/Ghost_face008,+917660077821,
+9/14/2025 14:04:46,Om sri Vigneshwara thirumala women's pg and hostel ,Female Only,Madhapur,Triple Sharing,10500,2,No Parking,Spacious,Separate bill,2,"Food is very average and limited, cannot ask for more if it is non veg ntg but only chicken curry, no gym or any sort of games, wifi is slow and also does not work sometimes, no power backup rude management,will not give back the advance amount when vacating, everything is trash except the room is hygiene and cleaned every 2 days",Anonymous,0,
+9/15/2025 5:52:33,Thrive Living,Co Living ( Male & Female both),Madhapur,Two Sharing,16000,5,For both it’s available.,Average,Separate bill,5,For food you need to pay extra. This price is for a double sharing room. For single room visit their site. I had the most beautiful stay at Kondapur. That is the best one. It’s homely. Nobody bothers anybody. Everything is sorted for you. ,Dizzy_Preference,9618386367,
+9/17/2025 1:22:30,Sri Lakshmi Men's PG & Guest Inn,Male Only,Gachibowli,Triple Sharing,9000,4,2-Wheeler,Average,Included in rent,4,I have been living in this PG since past 3-4 months and my experience hss been very good here. I am new to Hyd and chose this PG based on my friends' recommendation. The food served here is of decent quality. I personally checked the ingredients they use to prepare food. It is authentic and good. The owner is an army retired personnel so he knows how to provide service to people. He does good job in maintaining things here. The rooms are good. The ones facing towards the road is quite good in terms of airflow while the ones facing towards the building on the opposite road might feel congested. The rooms in 1st &2nd floors have few insects roaming around (in few rooms only) but the top floors are good. The internet works well. The washrooms are cleaned once a week and rooms are swept and moped daily. There are fridges and water coolers on all the floors and 2 washing machines for the whole PG.,guptasaurav850,9542894017,
+9/17/2025 18:42:12,GSR Executive gents hostel,Male Only,Hitec City,Triple Sharing,8500,5,2-Wheeler,Average,Included in rent,5,,Anonymous,9966940328,
+9/17/2025 23:17:48,Amulya Grand PG for men ,Male Only,Gachibowli,Four Sharing,8500,4,2-Wheeler,Average,Included in rent,4,Good Maintanence they clean daily ,Anonymous,+917059057777,
+9/19/2025 14:59:24,Shashi kumar boys hostel,Male Only,Amberpet,Triple Sharing,4500,4,2-Wheeler,Average,Included in rent,5,Near to public transport less prone to college,Anonymous,9959888962,
+9/21/2025 1:55:45,Aspire co living PG,Co Living ( Male & Female both),Gachibowli,Two Sharing,15000,5,2-Wheeler,Average,Separate bill,5,Good PG ,Anonymous,9991242499,
+9/21/2025 18:49:55,SRI LAKSHMI BALAJI GUEST INN AND PG FOR MEN,Male Only,Hitec City,Triple Sharing,7500,4,"2 Wheeler Parking (Very Less space, Congested)",Average,Included in rent,4,"Food - Veg/Non Veg both 3 times a day (honestly i am fine with the food maybe becuase i am coming from hostels, but i feel in general food here is better than other pgs my work friends pg is shit they keep telling they want to shift to my pg for food, they also lived in hostels for very long, so bias could be there)
+WiFi Speed- enough for my needs(downloading movies, games etc), but in case you play games like valorant(where ping matters) ping is shit ( hathway connection maybe thats why) 
+Security - cctv cams are there
+no gym
+no gamezone/game place
+owner is a micromanager, for eg he is telling us to use washing machine in 30mins mode only(quick wash) and we are not supposed to use other normal modes like cotton etc,etc, but people still keep using
+parking is a hassle, the owner keeps telling everyone to not keep handle locks on vehicles
+lift keeps getting stuck and stops working, and at nights they will turn off the lift so if you are in 4/5th floor and u come back at say 12night, they u have to climb stairs
+
+so overall for me food is good, the pg is kept clean nicely, the other things i just try to ignore coz for me food, hygiene were priority 
+also more detss
+2 sharing is 9k, 3 sharing is 7.5k, 4 sharing is 6.5k",u/Ill-Equivalent-6564/,07207297111,
+9/21/2025 21:30:06,R3 luxeloom colive,Co Living ( Male & Female both),Madhapur,Triple Sharing,120000,3,4-Wheeler,Spacious,Separate bill,4,Free gym,Anonymous,+919796999696,
+9/21/2025 22:10:45,CozyStay by Curryman ,Co Living ( Male & Female both),Gachibowli,Two Sharing,17500,4,"No parking inside PG, have to park it infront of pg",Spacious,Separate bill,4,"Pros:
+Daily cleaning so super clean and maintaned 
+Each room has its own separate fridge and TV
+Power Backup(AC, wifi all will work)
+Security-fingerprint entry & exit
+
+Cons:
+it is a PG+restaurant so food is a little spicy",Anonymous,7995050606,
+9/25/2025 13:25:07,Prasanth Luxury Men's PG,Male Only,Madhapur,Two Sharing,12000,3,2-Wheeler,Spacious,Separate bill,4,"Food is okayish, wifi is good, gym is not there, washing machine is there. Very neer to Ayyappa Society to main market road.",Cultural_Wishbone_78,9000039502,Male
+9/28/2025 19:50:14,Hack n sleep ,Co Living ( Male & Female both),Gachibowli,Two Sharing,16000,4,2-Wheeler,Average,Separate bill,4,"Food is decent, it is close to mindspace so offices such as Deloitte are at walking distance and to there is also DLF street for street food for evening outings and malls such as dmart and sarath are close by and alcohol shop is also closeby.",Anonymous,+919390843772,Male
+9/28/2025 22:06:47,Aadhya Colive PG,Co Living ( Male & Female both),Gowlidoddy,Triple Sharing,8500,3,"2 Wheeler Parking (Very Less space, Congested)",Average,Separate bill,4,,Anonymous,9154146149,Male
+9/30/2025 12:22:25,Manish Reddy Mens Guest Inn,Male Only,Kokapet,Triple Sharing,8000,3,"2 Wheeler Parking (Very Less space, Congested)",Average,Separate bill,3,"GAR tower 1 to 6 in walkable distance,
+Bus stand is right beside Gar. 
+Developing area so currently not so crowded, 
+Street food is comparatively cheaper
+",Anonymous,9032693137,Male
+10/2/2025 0:16:25,Gemini Luxury Stay | Men's PG Hostel in Madhapur,Male Only,Madhapur,Triple Sharing,9000,3,2-Wheeler,Average,Included in rent,3,,Anonymous,9424449777,Male
+10/6/2025 11:56:30,Venkata Sai Men's Hostel,Male Only,Nanakramguda,Two Sharing,9000,4,2-Wheeler,Average,Separate bill,4,Behind waverock building ,Anonymous,9844722219,Male
+10/6/2025 23:39:14,"Babai premium co-living space, Gacchibowli ",Co Living ( Male & Female both),Gachibowli,Triple Sharing,10500,4,No Parking,Average,Included in rent,4,,Anonymous,9492924138,Male
+10/8/2025 11:10:46,KARAN Luxury co-living ,Co Living ( Male & Female both),Gachibowli,Two Sharing,16000,4,2-Wheeler,Spacious,Separate bill,5,"Food, wifi, laundry, gym , Gaming zone ",Anonymous,9057994999,Male
+10/8/2025 11:12:05,myra luxury co-living ,Co Living ( Male & Female both),Gachibowli,Two Sharing,17000,5,2-Wheeler,Spacious,Separate bill,5,"Gym , balcony, box cricket ",Myra living,9057994999,Male
+10/8/2025 20:54:31,Housr coliving 50,Co Living ( Male & Female both),Kondapur,Single,30500,2,4-Wheeler,Average,Separate bill,4,"Wifi, Housekeeping, Laundry, food (breakfast and dinner) are all included in rent. Electricity meter is prepaid where you can recharge based on your own room usage. Place is clean and very hygenic. For food, I would say just gulp it.",Anonymous,09090908778,Male
+10/9/2025 13:13:01,BLISS Mens PG & Hostel,Male Only,Gachibowli,Triple Sharing,11000,4,"2 Wheeler Parking (Very Less space, Congested)",Cramped,Separate bill,4,Gym is available,Anonymous,9966608088,Male
+10/12/2025 23:26:42,Bro PG ,Co Living ( Male & Female both),Gowlidoddy,Four Sharing,7500,4,2-Wheeler,Spacious,Included in rent,4,,Anonymous,+918886988898,Male
+10/14/2025 15:55:11,sri harsha mens PG ,Male Only,Madhapur,Four Sharing,7500,2,2-Wheeler,Spacious,Included in rent,3,,Anonymous,9391385307,Male
+10/25/2025 9:30:46,My space pg for gents ,Male Only,SR Nagar,Two Sharing,10000,3,2-Wheeler,Average,Included in rent,3,,Timevolume,9490513971,Male
+10/25/2025 11:46:16,My Space Men's PG (Executive branch),Male Only,Madhura Nagar,Five Sharing,7000,3,2-Wheeler,Spacious,Included in rent,3,"South Indian food (3 times) with lunch box facility. Main advantage is public transport with the PG located between 3 metro stations. Walkable distance to the main road. Peaceful area, with few tea spots and breakfast options. Mostly students residing who have joined coaching in Ameerpet. Con : PG is a bit crowded & some rooms are not so spacious. ",SpiritedBeyond,9490513971,Male
+10/26/2025 23:07:32,Sravya Elite Stay for Women,Female Only,Madhapur,Two Sharing,14000,3,No Parking,Average,Separate bill,3,"Food could be better but its with almost all the PGs, has some gym equipment, no ventilation in the room, I put average but room feels cramped, wifi , washing machine etc.are free, tv as well, electricity bill is pre-paid. 14K is for an AC 2 sharing room. It's good but I'm also planning to take single sharing and something cheaper as well",Anonymous,7799059599,Female
+10/28/2025 19:22:52,Prime pg,Co Living ( Male & Female both),Financial district,Two Sharing,12000,4,Empty site next to it,Spacious,Separate bill,4,I felt its best to stay here with north and south food available they clean on everyday basis and even bedsheets are washed every alternate day.,Anonymous,+918121815858,Male
+10/28/2025 19:24:39,Prime north,Co Living ( Male & Female both),Financial district ,Two Sharing,20000,5,2-Wheeler,Spacious,Separate bill,5,"Food and self cooking options are available. Very close to financial district ,nanakuramguda and gowlidoddy",Anonymous,+918121815858,Male
+10/29/2025 19:40:27,Sri Sai Nilayam Men’s PG,Male Only,Hitec City,Triple Sharing,10000,4,"2 Wheeler Parking (Very Less space, Congested)",Average,Included in rent,3,,Anonymous,9986008989,Male
+10/30/2025 23:46:40,Irasad PG & Kitchen,Co Living ( Male & Female both),"Singapore Township, Pocharam",Triple Sharing,4000,5,4-Wheeler,Spacious,Separate bill,5,Peaceful Environment wirh lush greenary and walkable to Infosys SEZ campus and Mindspace East,Anonymous,7893664987,Female
+11/1/2025 19:27:33,Green Homes Coliving pg- Elite ,Co Living ( Male & Female both),Kondapur,Triple Sharing,13000,5,2-Wheeler,Average,Included in rent,4,"Pros:
+Food - I liked a lot
+Gym - yes ( you can look it on g maps images)
+Special events - Every month one night Food fest be conducted.
+Public transport- I think 0.5 km there will be bus stop. Near by Zudio and Star mart also avilable.
+The above rent is for AC 3 share ( 3 months back)
+
+Cons: 
+One thing I didn't expect is bed bugs suddenly came from nowhere and messed it up in my last month of stay . However they have sprayed some pesticides or sprays to solve the issue but it took 2-3 weeks for them to resolve the issue.  And I'm not sure whether it  worked or not. And this is not with all rooms only in some rooms.
+
+Apart from that everything is amazing.
+",Anonymous,7674935066,Male
+11/1/2025 20:54:08,"JURY'S LUXURY, CO-LIVING & MEN'S HOSTEL",Male Only,Kokapet,Two Sharing,10000,3,"2 Wheeler Parking (Very Less space, Congested)",Average,Included in rent,5,"Wifi is fast. Food is good for south indians, but not for north indians. The Point of Contact Subba Reddy has always been polite and helpful throughout my stay. Mini gym at top floor. ",Anonymous,6305444614,Male
