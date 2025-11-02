@@ -16,20 +16,22 @@ except FileNotFoundError:
     st.stop() # Stop the app from running further
 
 # --- Data Cleaning ---
+# First, strip whitespace from column names
+df.columns = df.columns.str.strip()
+
 # Rename columns for easier handling
-df.columns = df.columns.str.strip()  # Remove any extra spaces
 column_mapping = {
-    'Name of PG/Hostel: ': 'Name',
+    'Name of PG/Hostel:': 'Name',
     'Type of PG': 'Type',
     '🌍 Location:': 'Location',
     '🏡Type of Sharing:': 'Sharing',
-    '💰 Monthly Cost (₹): ': 'Cost',
-    '🍴 Food Quality: ': 'Food Quality',
+    '💰 Monthly Cost (₹):': 'Cost',
+    '🍴 Food Quality:': 'Food Quality',
     '🚲Parking Space': 'Parking',
     '🏢 Room Space:': 'Room Space',
     '⚡Electricity Bill:': 'Electricity',
-    'Overall Rating: ': 'Overall Rating',
-    'Additional Comments: ': 'Comments',
+    'Overall Rating:': 'Overall Rating',
+    'Additional Comments:': 'Comments',
     'Contributor Reddit Username': 'Contributor',
     'PG Owner Phone number': 'Phone',
     'Contributor Gender': 'Gender'
@@ -39,6 +41,14 @@ df.rename(columns=column_mapping, inplace=True)
 # Clean data
 df['Phone'] = df['Phone'].fillna('N/A')
 df['Cost'] = pd.to_numeric(df['Cost'], errors='coerce').fillna(0).astype(int)
+df['Gender'] = df['Gender'].fillna('Not Specified')
+df['Location'] = df['Location'].fillna('Unknown')
+df['Sharing'] = df['Sharing'].fillna('Unknown')
+df['Overall Rating'] = pd.to_numeric(df['Overall Rating'], errors='coerce').fillna(0)
+
+# Hide Timestamp column if it exists
+if 'Timestamp' in df.columns:
+    df = df.drop('Timestamp', axis=1)
 
 # --- Streamlit App UI ---
 st.title("🏡 Hyderabad PG/Hostel Information")
@@ -55,6 +65,10 @@ selected_locations = st.sidebar.multiselect("📍 Location", locations, default=
 genders = sorted(df['Gender'].unique())
 selected_genders = st.sidebar.multiselect("🚻 Gender", genders, default=genders)
 
+# Type of PG Filter
+pg_types = sorted(df['Type'].unique())
+selected_pg_types = st.sidebar.multiselect("🏠 Type of PG", pg_types, default=pg_types)
+
 # Cost Filter
 min_cost, max_cost = int(df['Cost'].min()), int(df['Cost'].max())
 selected_cost_range = st.sidebar.slider(
@@ -64,24 +78,13 @@ selected_cost_range = st.sidebar.slider(
     value=(min_cost, max_cost)
 )
 
-# Overall Rating Filter
-min_rating, max_rating = float(df['Overall Rating'].min()), float(df['Overall Rating'].max())
-selected_rating_range = st.sidebar.slider(
-    "⭐ Overall Rating",
-    min_value=min_rating,
-    max_value=max_rating,
-    value=(min_rating, max_rating),
-    step=0.5
-)
-
 # --- Filtering Logic ---
 filtered_df = df[
     (df['Location'].isin(selected_locations)) &
     (df['Gender'].isin(selected_genders)) &
+    (df['Type'].isin(selected_pg_types)) &
     (df['Cost'] >= selected_cost_range[0]) &
-    (df['Cost'] <= selected_cost_range[1]) &
-    (df['Overall Rating'] >= selected_rating_range[0]) &
-    (df['Overall Rating'] <= selected_rating_range[1])
+    (df['Cost'] <= selected_cost_range[1])
 ].copy()
 
 
@@ -110,9 +113,7 @@ else:
 
         # --- Chart 2: Average Cost by Sharing Type ---
         st.subheader("Average Cost by Sharing Type")
-        # Define a correct order for sharing types
-        sharing_order = ['Single', 'Two', 'Triple', 'Four']
-        avg_cost_sharing = filtered_df.groupby('Sharing')['Cost'].mean().reindex(sharing_order).dropna()
+        avg_cost_sharing = filtered_df.groupby('Sharing')['Cost'].mean().sort_values(ascending=False).round(0)
         st.bar_chart(avg_cost_sharing)
 
 
@@ -142,3 +143,4 @@ else:
 
 st.markdown("---")
 st.info("All thanks to https://www.reddit.com/user/thedesimonk/")
+st.markdown("⭐ If you find this helpful, please star the [GitHub repo](https://github.com/prosuvinhere/Hyd_PG)!")
