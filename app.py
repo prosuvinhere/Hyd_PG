@@ -16,8 +16,29 @@ except FileNotFoundError:
     st.stop() # Stop the app from running further
 
 # --- Data Cleaning ---
+# Rename columns for easier handling
+df.columns = df.columns.str.strip()  # Remove any extra spaces
+column_mapping = {
+    'Name of PG/Hostel: ': 'Name',
+    'Type of PG': 'Type',
+    '🌍 Location:': 'Location',
+    '🏡Type of Sharing:': 'Sharing',
+    '💰 Monthly Cost (₹): ': 'Cost',
+    '🍴 Food Quality: ': 'Food Quality',
+    '🚲Parking Space': 'Parking',
+    '🏢 Room Space:': 'Room Space',
+    '⚡Electricity Bill:': 'Electricity',
+    'Overall Rating: ': 'Overall Rating',
+    'Additional Comments: ': 'Comments',
+    'Contributor Reddit Username': 'Contributor',
+    'PG Owner Phone number': 'Phone',
+    'Contributor Gender': 'Gender'
+}
+df.rename(columns=column_mapping, inplace=True)
+
+# Clean data
 df['Phone'] = df['Phone'].fillna('N/A')
-df['Cost (₹)'] = df['Cost (₹)'].astype(int)
+df['Cost'] = pd.to_numeric(df['Cost'], errors='coerce').fillna(0).astype(int)
 
 # --- Streamlit App UI ---
 st.title("🏡 Hyderabad PG/Hostel Information")
@@ -35,7 +56,7 @@ genders = sorted(df['Gender'].unique())
 selected_genders = st.sidebar.multiselect("🚻 Gender", genders, default=genders)
 
 # Cost Filter
-min_cost, max_cost = int(df['Cost (₹)'].min()), int(df['Cost (₹)'].max())
+min_cost, max_cost = int(df['Cost'].min()), int(df['Cost'].max())
 selected_cost_range = st.sidebar.slider(
     "💰 Monthly Cost (₹)",
     min_value=min_cost,
@@ -44,23 +65,23 @@ selected_cost_range = st.sidebar.slider(
 )
 
 # Overall Rating Filter
-min_rating, max_rating = int(df['Overall Rating (/5)'].min()), int(df['Overall Rating (/5)'].max())
+min_rating, max_rating = float(df['Overall Rating'].min()), float(df['Overall Rating'].max())
 selected_rating_range = st.sidebar.slider(
-    "⭐ Overall Rating (/5)",
+    "⭐ Overall Rating",
     min_value=min_rating,
     max_value=max_rating,
     value=(min_rating, max_rating),
-    step=1
+    step=0.5
 )
 
 # --- Filtering Logic ---
 filtered_df = df[
     (df['Location'].isin(selected_locations)) &
     (df['Gender'].isin(selected_genders)) &
-    (df['Cost (₹)'] >= selected_cost_range[0]) &
-    (df['Cost (₹)'] <= selected_cost_range[1]) &
-    (df['Overall Rating (/5)'] >= selected_rating_range[0]) &
-    (df['Overall Rating (/5)'] <= selected_rating_range[1])
+    (df['Cost'] >= selected_cost_range[0]) &
+    (df['Cost'] <= selected_cost_range[1]) &
+    (df['Overall Rating'] >= selected_rating_range[0]) &
+    (df['Overall Rating'] <= selected_rating_range[1])
 ].copy()
 
 
@@ -84,14 +105,14 @@ else:
     with col1:
         # --- Chart 1: Average Cost by Location ---
         st.subheader("Average Cost by Location")
-        avg_cost_location = filtered_df.groupby('Location')['Cost (₹)'].mean().sort_values(ascending=False).round(0)
+        avg_cost_location = filtered_df.groupby('Location')['Cost'].mean().sort_values(ascending=False).round(0)
         st.bar_chart(avg_cost_location)
 
         # --- Chart 2: Average Cost by Sharing Type ---
         st.subheader("Average Cost by Sharing Type")
         # Define a correct order for sharing types
         sharing_order = ['Single', 'Two', 'Triple', 'Four']
-        avg_cost_sharing = filtered_df.groupby('Sharing')['Cost (₹)'].mean().reindex(sharing_order).dropna()
+        avg_cost_sharing = filtered_df.groupby('Sharing')['Cost'].mean().reindex(sharing_order).dropna()
         st.bar_chart(avg_cost_sharing)
 
 
@@ -107,14 +128,14 @@ else:
         fig, ax = plt.subplots()
         sns.scatterplot(
             data=filtered_df,
-            x='Cost (₹)',
-            y='Overall Rating (/5)',
+            x='Cost',
+            y='Overall Rating',
             hue='Sharing',
             ax=ax
         )
         ax.set_title("Overall Rating vs. Monthly Cost")
         ax.set_xlabel("Monthly Cost (₹)")
-        ax.set_ylabel("Overall Rating (/5)")
+        ax.set_ylabel("Overall Rating")
         ax.grid(True, linestyle='--', alpha=0.6)
         st.pyplot(fig)
 
