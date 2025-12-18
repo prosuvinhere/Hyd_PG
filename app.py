@@ -144,6 +144,7 @@ filtered_df = filtered_df[filtered_df['Cost'] <= budget]
 # --- 4. MAIN DASHBOARD UI ---
 
 st.title("🏙️ Hyderabad PG Market Intelligence")
+st.markdown("![Visitors](https://api.visitorbadge.io/api/visitors?path=https://hyderabad.streamlit.app&label=Total+Visitors&countColor=%23263759)")
 st.markdown("##### Real-time analysis of the rental market driven by community data.")
 
 # Top Metrics
