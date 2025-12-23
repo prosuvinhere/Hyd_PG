@@ -15,7 +15,6 @@ st.set_page_config(
 # --- 2. ADVANCED DATA ENGINE ---
 
 # Dictionary to map Area Names to approximate Lat/Lon for the Map View
-# (Added the most common Hyderabad IT hubs)
 LOCATION_COORDINATES = {
     "Gachibowli": [17.4401, 78.3489],
     "Madhapur": [17.4483, 78.3915],
@@ -100,15 +99,11 @@ def load_data():
         df['Tags'] = df['Comments'].apply(generate_smart_tags)
         
         # 2. Coordinates
-        # Map location string to lat/lon using our dictionary
-        # If location not found, default to 'Unknown' coords
         coords = df['Location'].apply(lambda x: LOCATION_COORDINATES.get(x, LOCATION_COORDINATES.get(x.split(' ')[0], LOCATION_COORDINATES['Unknown'])))
         df['lat'] = coords.apply(lambda x: x[0])
         df['lon'] = coords.apply(lambda x: x[1])
 
-        # 3. Value Score (Weighted: Rating matters more than just cheapness)
-        # Score = (Rating^2) / Cost * 10000. 
-        # This penalizes bad ratings heavily, even if cheap.
+        # 3. Value Score
         df['Value Score'] = ((df['Rating'] ** 2) / df['Cost']) * 5000
         
         return df
@@ -152,7 +147,6 @@ m1, m2, m3, m4 = st.columns(4)
 m1.metric("Available PGs", len(filtered_df), delta=f"from {len(df)}")
 m2.metric("Avg. Rent", f"₹{int(filtered_df['Cost'].mean()) if not filtered_df.empty else 0:,}")
 m3.metric("Avg. Rating", f"{filtered_df['Rating'].mean():.1f} ⭐" if not filtered_df.empty else "0")
-# Calculate 'Cheapest Area' dynamically
 try:
     cheapest_area = filtered_df.groupby('Location')['Cost'].mean().idxmin()
 except:
@@ -161,8 +155,8 @@ m4.metric("Cheapest Hub", cheapest_area)
 
 st.markdown("---")
 
-# TABS LAYOUT
-tab1, tab2, tab3 = st.tabs(["📊 Market Analytics", "🏆 Find Recommendations", "🗺️ Map View"])
+# TABS LAYOUT (Updated to include Tab 4)
+tab1, tab2, tab3, tab4 = st.tabs(["📊 Market Analytics", "🏆 Find Recommendations", "🗺️ Map View", "📝 Browse All"])
 
 # --- TAB 1: ANALYTICS (VISUALS) ---
 with tab1:
@@ -171,7 +165,6 @@ with tab1:
     with col1:
         st.subheader("Cost Distribution by Area")
         if not filtered_df.empty:
-            # Using Plotly Box Plot for better statistical view
             fig_box = px.box(filtered_df, x="Location", y="Cost", color="Location",
                              points="all", hover_data=["Name", "Rating"],
                              title="Rent Ranges (Dots represent individual PGs)")
@@ -180,12 +173,10 @@ with tab1:
     with col2:
         st.subheader("Sharing Type Breakdown")
         if not filtered_df.empty:
-            # Donut Chart
             fig_pie = px.pie(filtered_df, names='Sharing', values='Cost', hole=0.4,
                              title="Market Share by Room Type")
             st.plotly_chart(fig_pie, use_container_width=True)
 
-    # Advanced Scatter: Rating vs Cost
     st.subheader("The Value Matrix: Rating vs. Cost")
     st.caption("Look for bubbles in the **Top-Left** (High Rating, Low Cost). Size = Value Score.")
     if not filtered_df.empty:
@@ -193,22 +184,18 @@ with tab1:
                                  size="Value Score", color="Location",
                                  hover_name="Name", hover_data=["Sharing", "Gender"],
                                  size_max=40)
-        # Add a reference line for "Good Rating"
         fig_scatter.add_hline(y=4.0, line_dash="dash", line_color="green", annotation_text="Good Quality (>4.0)")
         st.plotly_chart(fig_scatter, use_container_width=True)
 
 # --- TAB 2: RECOMMENDATIONS (ACTIONABLE) ---
 with tab2:
     if not filtered_df.empty:
-        # Get Top 3 based on 'Value Score'
         top_picks = filtered_df.sort_values(by='Value Score', ascending=False).head(3)
         
         st.write(f"### 🎯 We found {len(filtered_df)} PGs matching your criteria. Here are the Top 3:")
         
-        # Display Cards
         for i, (index, row) in enumerate(top_picks.iterrows()):
             with st.container():
-                # Card Styling
                 c1, c2, c3 = st.columns([1, 2, 1])
                 
                 with c1:
@@ -218,7 +205,6 @@ with tab2:
                 with c2:
                     st.subheader(row['Name'])
                     st.markdown(f"📍 **{row['Location']}** | 🏠 {row['Sharing']}")
-                    # Display Smart Tags as Pills
                     st.write(" ".join([f"`{tag}`" for tag in row['Tags']]))
                     if row['Comments']:
                         st.caption(f"💬 \"{row['Comments'][:100]}...\"")
@@ -237,17 +223,46 @@ with tab3:
     st.markdown("Note: Locations are approximate based on Area center points.")
     
     if not filtered_df.empty:
-        # Streamlit Map needs columns named 'lat' and 'lon'
         map_data = filtered_df[['lat', 'lon']].copy()
-        
-        # Add some random jitter so points don't stack perfectly on top of each other
-        # (Since all Gachibowli points have same center, this separates them visually)
         map_data['lat'] = map_data['lat'] + np.random.normal(0, 0.002, len(map_data))
         map_data['lon'] = map_data['lon'] + np.random.normal(0, 0.002, len(map_data))
-        
         st.map(map_data, zoom=11)
     else:
         st.info("No data to map.")
+
+# --- TAB 4: BROWSE ALL (DATA TABLE) ---
+with tab4:
+    st.subheader("📝 Complete PG Directory")
+    
+    if not filtered_df.empty:
+        # Define columns to display (exclude internal scoring columns like 'lat', 'lon', 'Value Score', 'Tags')
+        display_cols = ['Name', 'Location', 'Type', 'Sharing', 'Cost', 'Rating', 'Gender', 'Phone', 'Comments']
+        
+        # Display Interactive Dataframe
+        st.dataframe(
+            filtered_df[display_cols],
+            column_config={
+                "Name": st.column_config.TextColumn("PG Name", width="medium"),
+                "Cost": st.column_config.NumberColumn("Monthly Rent", format="₹%d"),
+                "Rating": st.column_config.NumberColumn("Rating", format="%.1f ⭐"),
+                "Comments": st.column_config.TextColumn("User Reviews", width="large"),
+                "Phone": st.column_config.TextColumn("Contact")
+            },
+            use_container_width=True,
+            hide_index=True,
+            height=600
+        )
+        
+        # CSV Download Button
+        csv = filtered_df[display_cols].to_csv(index=False).encode('utf-8')
+        st.download_button(
+            label="📥 Download Data as CSV",
+            data=csv,
+            file_name='hyderabad_pg_directory.csv',
+            mime='text/csv',
+        )
+    else:
+        st.warning("No data available for the selected filters.")
 
 # --- FOOTER ---
 st.markdown("---")
