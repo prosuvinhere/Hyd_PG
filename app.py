@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import plotly.express as px
+import os
 
 # ─────────────────────────────────────────────
 #  PAGE CONFIG
@@ -12,12 +13,50 @@ st.set_page_config(
 )
 
 # ─────────────────────────────────────────────
+#  VIEW COUNTER LOGIC (FILE-BASED)
+# ─────────────────────────────────────────────
+COUNTER_FILE = "view_count.txt"
+
+# Only increment if this specific user hasn't logged a view yet in this session
+if "view_logged" not in st.session_state:
+    if os.path.exists(COUNTER_FILE):
+        with open(COUNTER_FILE, "r") as f:
+            try:
+                count = int(f.read().strip())
+            except ValueError:
+                count = 2000
+    else:
+        count = 2000
+        
+    # Increment and save
+    count += 1
+    with open(COUNTER_FILE, "w") as f:
+        f.write(str(count))
+        
+    st.session_state.view_logged = True
+
+# Read the current count for display
+if os.path.exists(COUNTER_FILE):
+    with open(COUNTER_FILE, "r") as f:
+        try:
+            current_views = int(f.read().strip())
+        except ValueError:
+            current_views = 2000
+else:
+    current_views = 2000
+
+# ─────────────────────────────────────────────
 #  NAVIGATION
 # ─────────────────────────────────────────────
 page = st.sidebar.radio(
     "Navigation", 
     ["Search & Analytics", "Metro Map", "Add a PG & Info"]
 )
+
+# Display the counter at the bottom of the sidebar
+st.sidebar.divider()
+st.sidebar.metric("👁️ Total Views", f"{current_views:,}")
+
 
 # ─────────────────────────────────────────────
 #  DATA LOADING & CLEANING
