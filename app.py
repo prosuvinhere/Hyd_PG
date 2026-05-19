@@ -15,289 +15,456 @@ st.set_page_config(
 )
 
 # ─────────────────────────────────────────────
-#  GLOBAL CSS
+#  GLOBAL CSS  — DARK MODE
 # ─────────────────────────────────────────────
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;0,9..144,800;1,9..144,300&family=Epilogue:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap');
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html, body, [class*="css"] { font-family: 'Epilogue', sans-serif; }
+html, body, [class*="css"] {
+    font-family: 'DM Sans', sans-serif;
+    background: #0A0C10 !important;
+    color: #C8D0DC !important;
+}
 #MainMenu, header, footer  { visibility: hidden; }
 .block-container           { padding: 0 !important; max-width: 100% !important; }
 section[data-testid="stSidebar"] { display: none; }
 
+/* Force Streamlit background dark */
+.stApp, .main, [data-testid="stAppViewContainer"] {
+    background: #0A0C10 !important;
+}
+[data-testid="stHeader"] { background: transparent !important; }
+
 :root {
-    --cream:    #FAF7F2;
-    --warm-50:  #FDF4EC;
-    --terra:    #C7522A;
-    --terra-d:  #9E3D18;
-    --terra-l:  #E8866A;
-    --slate:    #1C2430;
-    --slate-m:  #2E3A4A;
-    --slate-l:  #4A5568;
-    --muted:    #8896A5;
-    --border:   #E8E2D9;
-    --success:  #2D7D5A;
-    --warn:     #B45309;
-    --green-bg: #F0FAF5;
-    --green-bd: #A7D9C0;
-    --amber-bg: #FFFBEB;
-    --amber-bd: #FDE68A;
-    --red-bg:   #FEF2F2;
-    --red-bd:   #FECACA;
+    /* Dark backgrounds */
+    --bg-base:    #0A0C10;
+    --bg-1:       #0F1117;
+    --bg-2:       #141720;
+    --bg-3:       #1A1F2E;
+    --bg-card:    #13161F;
+    --bg-hover:   #1C2030;
+
+    /* Borders */
+    --border:     #1E2335;
+    --border-m:   #252A3D;
+    --border-l:   #2E3450;
+
+    /* Brand — electric amber/orange */
+    --accent:     #F5A623;
+    --accent-d:   #C7821A;
+    --accent-l:   #FFD580;
+    --accent-dim: rgba(245,166,35,.12);
+    --accent-glow:rgba(245,166,35,.25);
+
+    /* Teal accent */
+    --teal:       #00C9A7;
+    --teal-dim:   rgba(0,201,167,.1);
+    --teal-bd:    rgba(0,201,167,.25);
+
+    /* Text */
+    --text-1:     #EDF0F7;
+    --text-2:     #9AA3B5;
+    --text-3:     #5C6478;
+
+    /* Semantic */
+    --success:    #00C9A7;
+    --warn:       #F5A623;
+    --danger:     #F0546B;
+    --info:       #5B8CF5;
+
+    /* Status chip bgs */
+    --chip-n-bg:  rgba(92,100,120,.15);
+    --chip-n-bd:  #252A3D;
+    --chip-g-bg:  rgba(0,201,167,.1);
+    --chip-g-bd:  rgba(0,201,167,.3);
+    --chip-r-bg:  rgba(240,84,107,.1);
+    --chip-r-bd:  rgba(240,84,107,.3);
+    --chip-b-bg:  rgba(91,140,245,.1);
+    --chip-b-bd:  rgba(91,140,245,.3);
+    --chip-y-bg:  rgba(245,166,35,.1);
+    --chip-y-bd:  rgba(245,166,35,.3);
 }
 
 /* ── HERO ── */
 .hero {
-    background: var(--slate);
-    padding: 2.8rem 3.5rem 2.4rem;
+    background: var(--bg-1);
+    padding: 3rem 3.5rem 2.6rem;
     position: relative; overflow: hidden;
+    border-bottom: 1px solid var(--border);
 }
 .hero::before {
-    content:''; position:absolute; inset:0;
-    background: radial-gradient(ellipse 55% 90% at 92% 50%, rgba(199,82,42,.2) 0%, transparent 70%);
+    content:''; position:absolute; top:-60px; right:-80px;
+    width:600px; height:600px;
+    background: radial-gradient(circle, rgba(245,166,35,.08) 0%, transparent 65%);
+    pointer-events: none;
+}
+.hero::after {
+    content:''; position:absolute; bottom:-80px; left:200px;
+    width:400px; height:400px;
+    background: radial-gradient(circle, rgba(0,201,167,.05) 0%, transparent 65%);
     pointer-events: none;
 }
 .hero-inner { max-width: 1200px; margin: 0 auto; position: relative; z-index: 1; }
 .hero-badge {
     display: inline-flex; align-items: center; gap: 6px;
-    background: rgba(199,82,42,.15); border: 1px solid rgba(199,82,42,.3);
-    border-radius: 20px; padding: 4px 12px;
-    font-size: 11px; font-weight: 600; color: var(--terra-l);
-    margin-bottom: .9rem; letter-spacing: .04em;
+    background: var(--accent-dim); border: 1px solid var(--accent-glow);
+    border-radius: 20px; padding: 4px 13px;
+    font-size: 11px; font-weight: 600; color: var(--accent);
+    margin-bottom: 1rem; letter-spacing: .05em; text-transform: uppercase;
 }
 .hero-h1 {
-    font-family: 'Fraunces', serif;
-    font-size: clamp(1.9rem, 4vw, 3rem);
-    font-weight: 800; line-height: 1.1;
-    color: #F8F4EF; margin-bottom: .6rem;
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    font-weight: 800; line-height: 1.08;
+    color: var(--text-1); margin-bottom: .7rem;
 }
-.hero-h1 em { font-style:italic; font-weight:300; color:var(--terra-l); }
+.hero-h1 em {
+    font-style: italic; font-weight: 400;
+    color: var(--accent);
+    background: linear-gradient(90deg, var(--accent), var(--teal));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
 .hero-sub {
-    font-size:14px; font-weight:300;
-    color:#8896A5; max-width:500px; line-height:1.7;
+    font-size: 14px; font-weight: 300;
+    color: var(--text-2); max-width: 480px; line-height: 1.8;
 }
 .hero-nums {
-    display:flex; gap:2.5rem; margin-top:1.6rem;
+    display: flex; gap: 3rem; margin-top: 2rem;
 }
 .hero-num-val {
-    font-family:'Fraunces',serif;
-    font-size:2rem; font-weight:600; color:#F8F4EF; line-height:1;
+    font-family: 'Syne', sans-serif;
+    font-size: 2.2rem; font-weight: 700; color: var(--text-1); line-height: 1;
 }
+.hero-num-val.accent { color: var(--accent); }
 .hero-num-lbl {
-    font-size:10px; font-weight:600;
-    letter-spacing:.1em; text-transform:uppercase;
-    color:#4A5568; margin-top:2px;
+    font-size: 10px; font-weight: 600;
+    letter-spacing: .1em; text-transform: uppercase;
+    color: var(--text-3); margin-top: 4px;
 }
+.hero-divider { width: 1px; background: var(--border); align-self: stretch; }
 
-/* ── FILTER STRIP ── */
-.fstrip-wrap {
-    background:#fff;
-    border-bottom:1px solid var(--border);
-    padding:.75rem 3.5rem;
-    position:sticky; top:0; z-index:100;
-    box-shadow: 0 2px 10px rgba(28,36,48,.05);
+/* Force Streamlit widgets dark */
+.stSelectbox > div > div,
+.stTextInput > div > div > input {
+    background: var(--bg-3) !important;
+    border-color: var(--border-m) !important;
+    color: var(--text-1) !important;
+    border-radius: 10px !important;
 }
+.stSelectbox > div > div:hover,
+.stTextInput > div > div > input:hover {
+    border-color: var(--border-l) !important;
+}
+.stSelectbox > div > div:focus-within,
+.stTextInput > div > div > input:focus {
+    border-color: var(--accent) !important;
+    box-shadow: 0 0 0 3px var(--accent-dim) !important;
+}
+/* Dropdown options */
+[data-baseweb="popover"] { background: var(--bg-3) !important; }
+[data-baseweb="menu"] { background: var(--bg-3) !important; }
+[role="option"] { background: var(--bg-3) !important; color: var(--text-1) !important; }
+[role="option"]:hover { background: var(--bg-hover) !important; }
+
+/* Slider */
+[data-testid="stSlider"] .rc-slider-track { background: var(--accent) !important; }
+[data-testid="stSlider"] .rc-slider-handle {
+    border-color: var(--accent) !important;
+    background: var(--accent) !important;
+    box-shadow: 0 0 8px var(--accent-glow) !important;
+}
+[data-testid="stSlider"] .rc-slider-rail { background: var(--border-l) !important; }
+div[data-testid="stSlider"] p { color: var(--text-2) !important; }
 
 /* ── CONTENT ── */
-.content { max-width:1200px; margin:0 auto; padding:2rem 3.5rem 4rem; }
+.content { max-width: 1200px; margin: 0 auto; padding: 2rem 3.5rem 4rem; }
 
 /* ── STAT STRIP ── */
 .stat-strip {
-    display:grid; grid-template-columns:repeat(4,1fr);
-    gap:1rem; margin-bottom:2rem;
+    display: grid; grid-template-columns: repeat(4,1fr);
+    gap: 1rem; margin-bottom: 2rem;
 }
 .stat-card {
-    background:#fff; border:1px solid var(--border);
-    border-radius:14px; padding:1.1rem 1.3rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px; padding: 1.2rem 1.4rem;
+    position: relative; overflow: hidden;
+    transition: border-color .2s, transform .2s;
 }
-.stat-card.hi { border-left:3px solid var(--terra); }
+.stat-card:hover { border-color: var(--border-l); transform: translateY(-2px); }
+.stat-card.hi {
+    border-left: 3px solid var(--accent);
+    background: linear-gradient(135deg, rgba(245,166,35,.06) 0%, var(--bg-card) 60%);
+}
 .stat-lbl {
-    font-size:10px; font-weight:600;
-    letter-spacing:.1em; text-transform:uppercase;
-    color:var(--muted); margin-bottom:6px;
+    font-size: 10px; font-weight: 600;
+    letter-spacing: .12em; text-transform: uppercase;
+    color: var(--text-3); margin-bottom: 8px;
 }
 .stat-val {
-    font-family:'Fraunces',serif;
-    font-size:1.65rem; font-weight:600;
-    color:var(--slate); line-height:1;
+    font-family: 'Syne', sans-serif;
+    font-size: 1.75rem; font-weight: 700;
+    color: var(--text-1); line-height: 1;
 }
-.stat-sub { font-size:11px; color:var(--muted); margin-top:3px; }
+.stat-sub { font-size: 11px; color: var(--text-3); margin-top: 5px; }
 
 /* ── SEC HEAD ── */
 .sec-head {
-    display:flex; align-items:baseline;
-    justify-content:space-between; margin-bottom:1.1rem;
+    display: flex; align-items: baseline;
+    justify-content: space-between; margin-bottom: 1.1rem;
 }
 .sec-title {
-    font-family:'Fraunces',serif;
-    font-size:1.25rem; font-weight:600; color:var(--slate);
+    font-family: 'Syne', sans-serif;
+    font-size: 1.2rem; font-weight: 700; color: var(--text-1);
 }
 .sec-badge {
-    font-size:11px; color:var(--muted);
-    background:#F3F0EB; border-radius:20px; padding:2px 10px;
+    font-size: 11px; color: var(--text-3);
+    background: var(--bg-3); border: 1px solid var(--border);
+    border-radius: 20px; padding: 2px 10px;
 }
 
 /* ── BEST BANNER ── */
 .best-banner {
-    background:linear-gradient(135deg,var(--slate) 0%,var(--slate-m) 100%);
-    border-radius:18px; padding:1.4rem 1.8rem;
-    margin-bottom:1.6rem; color:#fff;
-    display:flex; align-items:center; gap:1.2rem; flex-wrap:wrap;
+    background: linear-gradient(135deg, var(--bg-2) 0%, var(--bg-3) 100%);
+    border: 1px solid var(--border-m);
+    border-radius: 20px; padding: 1.5rem 1.8rem;
+    margin-bottom: 1.6rem;
+    display: flex; align-items: center; gap: 1.4rem; flex-wrap: wrap;
+    position: relative; overflow: hidden;
 }
-.bb-crown { font-size:2.2rem; flex-shrink:0; }
+.best-banner::before {
+    content: ''; position: absolute; top: -30px; right: -30px;
+    width: 200px; height: 200px;
+    background: radial-gradient(circle, rgba(245,166,35,.1) 0%, transparent 70%);
+    pointer-events: none;
+}
+.bb-crown { font-size: 2.5rem; flex-shrink: 0; filter: drop-shadow(0 0 12px rgba(245,166,35,.5)); }
 .bb-label {
-    font-size:10px; font-weight:600;
-    letter-spacing:.12em; text-transform:uppercase;
-    color:var(--terra-l); margin-bottom:3px;
+    font-size: 10px; font-weight: 600;
+    letter-spacing: .12em; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 4px;
 }
 .bb-name {
-    font-family:'Fraunces',serif;
-    font-size:1.15rem; font-weight:600; color:#F8F4EF;
+    font-family: 'Syne', sans-serif;
+    font-size: 1.2rem; font-weight: 700; color: var(--text-1);
 }
-.bb-meta { font-size:12px; color:#8896A5; margin-top:2px; }
+.bb-meta { font-size: 12px; color: var(--text-2); margin-top: 3px; }
 .bb-price {
-    font-family:'Fraunces',serif;
-    font-size:1.7rem; font-weight:600;
-    color:var(--terra-l); margin-left:auto;
+    font-family: 'Syne', sans-serif;
+    font-size: 1.8rem; font-weight: 700;
+    color: var(--accent); margin-left: auto;
 }
 .bb-price span {
-    font-family:'Epilogue',sans-serif;
-    font-size:12px; font-weight:300; color:#4A5568;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px; font-weight: 300; color: var(--text-3);
 }
 
 /* ── PG CARD ── */
 .pg-card {
-    background:#fff; border:1px solid var(--border);
-    border-radius:18px; padding:1.3rem 1.4rem;
-    margin-bottom:.9rem; position:relative;
-    transition:box-shadow .16s, border-color .16s, transform .16s;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 18px; padding: 1.3rem 1.5rem;
+    margin-bottom: .85rem; position: relative;
+    transition: box-shadow .2s, border-color .2s, transform .2s;
 }
 .pg-card:hover {
-    box-shadow:0 8px 28px rgba(28,36,48,.09);
-    border-color:var(--terra-l); transform:translateY(-1px);
+    box-shadow: 0 8px 32px rgba(0,0,0,.5), 0 0 0 1px var(--border-l);
+    transform: translateY(-2px);
 }
-.pg-card.gold   { border-top:3px solid #F59E0B; }
-.pg-card.silver { border-top:3px solid #94A3B8; }
-.pg-card.bronze { border-top:3px solid #CD7C3A; }
-.pg-rank { position:absolute; top:1rem; right:1rem; font-size:1.2rem; }
+.pg-card.gold   { border-top: 3px solid var(--accent); }
+.pg-card.silver { border-top: 3px solid #7C8FA6; }
+.pg-card.bronze { border-top: 3px solid #A67C52; }
+.pg-rank { position: absolute; top: 1rem; right: 1rem; font-size: 1.3rem; }
 .pg-name {
-    font-family:'Fraunces',serif;
-    font-size:1rem; font-weight:600; color:var(--slate);
-    margin-bottom:2px; padding-right:2rem;
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem; font-weight: 600; color: var(--text-1);
+    margin-bottom: 3px; padding-right: 2.5rem;
 }
-.pg-loc { font-size:12px; color:var(--muted); margin-bottom:.7rem; }
+.pg-loc { font-size: 12px; color: var(--text-3); margin-bottom: .8rem; }
 .pg-price {
-    font-family:'Fraunces',serif;
-    font-size:1.45rem; font-weight:600; color:var(--terra); line-height:1;
-    margin-bottom:.55rem;
+    font-family: 'Syne', sans-serif;
+    font-size: 1.5rem; font-weight: 700; color: var(--accent); line-height: 1;
+    margin-bottom: .6rem;
 }
-.pg-price span { font-family:'Epilogue',sans-serif; font-size:12px; font-weight:400; color:var(--muted); }
-.chips { display:flex; flex-wrap:wrap; gap:4px; margin-bottom:.55rem; }
+.pg-price span { font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 400; color: var(--text-3); }
+.chips { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: .6rem; }
 .chip {
-    font-size:11px; font-weight:500; border-radius:20px;
-    padding:3px 9px; border:1px solid;
+    font-size: 11px; font-weight: 500; border-radius: 20px;
+    padding: 3px 10px; border: 1px solid;
 }
-.cn { background:#F3F0EB; border-color:#E8E2D9; color:var(--slate-l); }
-.cs { background:var(--amber-bg); border-color:var(--amber-bd); color:var(--warn); }
-.cg { background:var(--green-bg); border-color:var(--green-bd); color:var(--success); }
-.cr { background:var(--red-bg); border-color:var(--red-bd); color:#991B1B; }
-.cb { background:#EFF6FF; border-color:#BFDBFE; color:#1D4ED8; }
+.cn { background: var(--chip-n-bg); border-color: var(--chip-n-bd); color: var(--text-2); }
+.cs { background: var(--chip-y-bg); border-color: var(--chip-y-bd); color: var(--accent); }
+.cg { background: var(--chip-g-bg); border-color: var(--chip-g-bd); color: var(--teal); }
+.cr { background: var(--chip-r-bg); border-color: var(--chip-r-bd); color: var(--danger); }
+.cb { background: var(--chip-b-bg); border-color: var(--chip-b-bd); color: var(--info); }
 .pg-quote {
-    font-size:12px; font-style:italic; color:var(--muted);
-    line-height:1.55; border-left:2px solid var(--border);
-    padding-left:10px; margin-top:.55rem;
-    display:-webkit-box; -webkit-line-clamp:2;
-    -webkit-box-orient:vertical; overflow:hidden;
+    font-size: 12px; font-style: italic; color: var(--text-3);
+    line-height: 1.6; border-left: 2px solid var(--border-l);
+    padding-left: 12px; margin-top: .6rem;
+    display: -webkit-box; -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical; overflow: hidden;
 }
 
 /* ── INSIGHT BOX ── */
 .insight {
-    background:var(--warm-50); border:1px solid #EDD9C8;
-    border-radius:14px; padding:1rem 1.2rem; margin-top:1rem;
+    background: var(--bg-2); border: 1px solid var(--border-m);
+    border-radius: 16px; padding: 1.1rem 1.3rem; margin-top: 1rem;
 }
 .insight-lbl {
-    font-size:10px; font-weight:600;
-    letter-spacing:.1em; text-transform:uppercase;
-    color:var(--terra); margin-bottom:.5rem;
+    font-size: 10px; font-weight: 600;
+    letter-spacing: .12em; text-transform: uppercase;
+    color: var(--accent); margin-bottom: .6rem;
 }
 .irow {
-    display:flex; justify-content:space-between;
-    font-size:12px; padding:4px 0;
-    border-bottom:1px solid #EDD9C8; color:var(--slate-l);
+    display: flex; justify-content: space-between;
+    font-size: 12px; padding: 5px 0;
+    border-bottom: 1px solid var(--border); color: var(--text-2);
 }
-.irow:last-child { border-bottom:none; }
-.ival { font-weight:600; color:var(--slate); font-family:'Fraunces',serif; }
+.irow:last-child { border-bottom: none; }
+.ival { font-weight: 600; color: var(--text-1); font-family: 'Syne', sans-serif; font-size: 13px; }
 
 /* ── CHART CARD ── */
 .chart-title {
-    font-family:'Fraunces',serif;
-    font-size:1rem; font-weight:600; color:var(--slate); margin-bottom:2px;
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem; font-weight: 700; color: var(--text-1); margin-bottom: 2px;
 }
-.chart-sub { font-size:12px; color:var(--muted); margin-bottom:.6rem; }
+.chart-sub { font-size: 12px; color: var(--text-3); margin-bottom: .7rem; }
 
 /* ── TABS ── */
 .stTabs [data-baseweb="tab-list"] {
-    background:#F3F0EB; border-radius:12px;
-    padding:4px; gap:3px; border:none;
+    background: var(--bg-2); border-radius: 14px;
+    padding: 5px; gap: 3px; border: 1px solid var(--border);
 }
 .stTabs [data-baseweb="tab"] {
-    border-radius:9px !important;
-    font-family:'Epilogue',sans-serif !important;
-    font-size:13px !important; font-weight:500 !important;
-    color:var(--muted) !important; background:transparent !important;
-    padding:6px 18px !important;
+    border-radius: 10px !important;
+    font-family: 'DM Sans', sans-serif !important;
+    font-size: 13px !important; font-weight: 500 !important;
+    color: var(--text-3) !important; background: transparent !important;
+    padding: 7px 20px !important;
 }
 .stTabs [aria-selected="true"] {
-    background:#fff !important; color:var(--slate) !important;
-    box-shadow:0 1px 6px rgba(0,0,0,.08) !important;
+    background: var(--bg-3) !important; color: var(--text-1) !important;
+    box-shadow: 0 2px 10px rgba(0,0,0,.4) !important;
+    border: 1px solid var(--border-m) !important;
 }
-.stTabs [data-baseweb="tab-border"] { display:none !important; }
+.stTabs [data-baseweb="tab-border"] { display: none !important; }
+[data-testid="stTabsContent"] { background: transparent !important; }
 
 /* ── BUTTONS ── */
 .stButton button {
-    background:var(--slate) !important; color:#F8F4EF !important;
-    border:none !important; border-radius:10px !important;
-    font-family:'Epilogue',sans-serif !important;
-    font-size:12px !important; font-weight:500 !important;
-    padding:6px 14px !important;
-    transition:background .14s !important;
+    background: var(--bg-3) !important;
+    color: var(--text-1) !important;
+    border: 1px solid var(--border-m) !important;
+    border-radius: 10px !important;
+    font-family: 'DM Sans', sans-serif !important;
+    font-size: 12px !important; font-weight: 500 !important;
+    padding: 6px 14px !important;
+    transition: all .15s !important;
 }
-.stButton button:hover { background:var(--terra) !important; }
+.stButton button:hover {
+    background: var(--accent-dim) !important;
+    border-color: var(--accent-glow) !important;
+    color: var(--accent) !important;
+}
 .stDownloadButton button {
-    background:#fff !important; color:var(--slate) !important;
-    border:1px solid var(--border) !important;
-    border-radius:10px !important; width:100% !important;
-    font-family:'Epilogue',sans-serif !important;
+    background: var(--bg-3) !important;
+    color: var(--text-1) !important;
+    border: 1px solid var(--border-m) !important;
+    border-radius: 10px !important; width: 100% !important;
+    font-family: 'DM Sans', sans-serif !important;
+}
+.stDownloadButton button:hover {
+    border-color: var(--teal-bd) !important;
+    color: var(--teal) !important;
 }
 
-/* ── WIDGETS ── */
+/* ── WIDGETS LABELS ── */
 .stSelectbox > label, .stSlider > label, .stTextInput > label {
-    font-size:11px !important; font-weight:600 !important;
-    letter-spacing:.08em !important; text-transform:uppercase !important;
-    color:var(--muted) !important;
+    font-size: 11px !important; font-weight: 600 !important;
+    letter-spacing: .08em !important; text-transform: uppercase !important;
+    color: var(--text-3) !important;
+}
+.stSelectbox [data-baseweb="select"] span { color: var(--text-1) !important; }
+
+/* Dataframe dark */
+.stDataFrame, [data-testid="stDataFrame"] {
+    background: var(--bg-card) !important;
+    border: 1px solid var(--border) !important;
+    border-radius: 14px !important;
+}
+[data-testid="stDataFrame"] th {
+    background: var(--bg-2) !important;
+    color: var(--text-2) !important;
+    border-color: var(--border) !important;
+}
+[data-testid="stDataFrame"] td {
+    color: var(--text-1) !important;
+    border-color: var(--border) !important;
 }
 
-/* ── EMPTY ── */
+/* ── SEARCH BAR ── */
+.gsearch-wrap {
+    background: var(--bg-1);
+    border-bottom: 1px solid var(--border);
+    padding: .7rem 3.5rem;
+}
+.gsearch-wrap .stTextInput input {
+    border-radius: 30px !important;
+    font-size: 14px !important;
+    border-color: var(--border-m) !important;
+    background: var(--bg-3) !important;
+    color: var(--text-1) !important;
+}
+.gsearch-wrap .stTextInput input:focus {
+    border-color: var(--accent) !important;
+    box-shadow: 0 0 0 3px var(--accent-dim) !important;
+}
+.gsearch-wrap .stTextInput input::placeholder { color: var(--text-3) !important; }
+
+/* ── ALERTS / INFO ── */
+.stInfo, .stSuccess, .stWarning, .stError {
+    background: var(--bg-2) !important;
+    border-color: var(--border-m) !important;
+    color: var(--text-1) !important;
+}
+.stCode { background: var(--bg-2) !important; color: var(--teal) !important; }
+
+/* ── MAP NOTE ── */
+.map-note {
+    background: rgba(245,166,35,.08);
+    border: 1px solid rgba(245,166,35,.2);
+    border-radius: 12px;
+    padding: .7rem 1rem; margin-bottom: 1rem;
+    font-size: 13px; color: var(--accent);
+}
+
+/* ── EMPTY STATE ── */
 .empty {
-    text-align:center; padding:3.5rem 2rem;
-    background:#fff; border-radius:18px;
-    border:1px dashed var(--border);
+    text-align: center; padding: 4rem 2rem;
+    background: var(--bg-card); border-radius: 20px;
+    border: 1px dashed var(--border-m);
 }
-.empty-icon { font-size:2.8rem; margin-bottom:.7rem; }
+.empty-icon { font-size: 3rem; margin-bottom: .8rem; }
 .empty-title {
-    font-family:'Fraunces',serif;
-    font-size:1.1rem; font-weight:600; color:var(--slate);
+    font-family: 'Syne', sans-serif;
+    font-size: 1.15rem; font-weight: 700; color: var(--text-1);
 }
-.empty-sub { font-size:13px; color:var(--muted); margin-top:4px; }
+.empty-sub { font-size: 13px; color: var(--text-3); margin-top: 5px; }
 
 /* ── FOOTER ── */
 .footer {
-    background:var(--slate); text-align:center;
-    padding:1.4rem; font-size:12px; color:#4A5568;
+    background: var(--bg-1);
+    border-top: 1px solid var(--border);
+    text-align: center;
+    padding: 1.5rem; font-size: 12px; color: var(--text-3);
 }
-.footer a { color:var(--terra-l); text-decoration:none; }
+.footer a { color: var(--accent); text-decoration: none; }
+.footer a:hover { color: var(--accent-l); }
+
+/* Caption */
+.stCaption { color: var(--text-3) !important; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -321,18 +488,18 @@ COORDS = {
 }
 
 TAG_RULES = [
-    ("🍛 Great Food",     lambda t: any(x in t for x in ["good food","tasty","delicious","food is good"])),
-    ("🚇 Metro Near",     lambda t: any(x in t for x in ["metro","transport","near bus","walking distance"])),
-    ("✨ Very Clean",     lambda t: any(x in t for x in ["clean","neat","maintained","hygienic","tidy"])),
-    ("🚀 Fast WiFi",      lambda t: any(x in t for x in ["wifi","internet","fast net","broadband"])),
-    ("🔒 Secure",         lambda t: any(x in t for x in ["safe","security","cctv","gated","guard"])),
-    ("🌿 Peaceful",       lambda t: any(x in t for x in ["quiet","peaceful","calm","no noise"])),
-    ("❄️ AC Rooms",       lambda t: any(x in t for x in ["ac ","air condition","ac room","air-condition"])),
+    ("🍛 Great Food",      lambda t: any(x in t for x in ["good food","tasty","delicious","food is good"])),
+    ("🚇 Metro Near",      lambda t: any(x in t for x in ["metro","transport","near bus","walking distance"])),
+    ("✨ Very Clean",      lambda t: any(x in t for x in ["clean","neat","maintained","hygienic","tidy"])),
+    ("🚀 Fast WiFi",       lambda t: any(x in t for x in ["wifi","internet","fast net","broadband"])),
+    ("🔒 Secure",          lambda t: any(x in t for x in ["safe","security","cctv","gated","guard"])),
+    ("🌿 Peaceful",        lambda t: any(x in t for x in ["quiet","peaceful","calm","no noise"])),
+    ("❄️ AC Rooms",        lambda t: any(x in t for x in ["ac ","air condition","ac room","air-condition"])),
     ("🍽️ Mess Included",  lambda t: any(x in t for x in ["mess","meals included","food included","breakfast"])),
     ("🪳 Hygiene Issue",  lambda t: any(x in t for x in ["cockroach","bugs","dirty","unclean","pest"])),
-    ("🥣 Bad Food",       lambda t: any(x in t for x in ["bad food","worst food","repetitive food","tasteless"])),
-    ("🚫 No Parking",     lambda t: any(x in t for x in ["no parking","parking issue","congested"])),
-    ("📶 Slow WiFi",      lambda t: any(x in t for x in ["slow wifi","no wifi","bad internet","no internet"])),
+    ("🥣 Bad Food",        lambda t: any(x in t for x in ["bad food","worst food","repetitive food","tasteless"])),
+    ("🚫 No Parking",      lambda t: any(x in t for x in ["no parking","parking issue","congested"])),
+    ("📶 Slow WiFi",       lambda t: any(x in t for x in ["slow wifi","no wifi","bad internet","no internet"])),
 ]
 POS = {"🍛 Great Food","🚇 Metro Near","✨ Very Clean","🚀 Fast WiFi","🔒 Secure","🌿 Peaceful","❄️ AC Rooms","🍽️ Mess Included"}
 NEG = {"🪳 Hygiene Issue","🥣 Bad Food","🚫 No Parking","📶 Slow WiFi"}
@@ -353,19 +520,20 @@ def clean_cost(x):
         except: return 0
     return float(x) if x else 0
 
-CHART_COLORS = ["#C7522A","#2D7D5A","#1C2430","#B45309","#1D4ED8","#7C3AED","#0F766E","#BE185D","#0369A1","#065F46","#78350F"]
+# Dark-mode chart color palette
+CHART_COLORS = ["#F5A623","#00C9A7","#5B8CF5","#F0546B","#A78BFA","#34D399","#FB923C","#60A5FA","#F472B6","#FBBF24","#4ADE80"]
 
 def base_layout(height=300):
     return dict(
         height=height, margin=dict(t=5,b=5,l=5,r=5),
-        font=dict(family="Epilogue"),
+        font=dict(family="DM Sans", color="#9AA3B5"),
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
     )
 
 def style_axes(fig):
-    fig.update_xaxes(gridcolor="#F3F0EB", zerolinecolor="#F3F0EB")
-    fig.update_yaxes(gridcolor="#F3F0EB", zerolinecolor="#F3F0EB")
+    fig.update_xaxes(gridcolor="#1E2335", zerolinecolor="#1E2335", color="#5C6478")
+    fig.update_yaxes(gridcolor="#1E2335", zerolinecolor="#1E2335", color="#5C6478")
     return fig
 
 @st.cache_data(ttl=600)
@@ -432,10 +600,12 @@ st.markdown(f"""
             <div class="hero-num-val">{total_pgs}</div>
             <div class="hero-num-lbl">PG Listings</div>
           </div>
+          <div class="hero-divider"></div>
           <div>
-            <div class="hero-num-val" style="color:var(--terra-l);">{total_areas}</div>
+            <div class="hero-num-val accent">{total_areas}</div>
             <div class="hero-num-lbl">Areas Covered</div>
           </div>
+          <div class="hero-divider"></div>
           <div>
             <div class="hero-num-val">{df[df['Rating']>0]['Rating'].mean():.1f}⭐</div>
             <div class="hero-num-lbl">Avg Rating</div>
@@ -450,7 +620,6 @@ st.markdown(f"""
 # ─────────────────────────────────────────────
 #  FILTER BAR
 # ─────────────────────────────────────────────
-st.markdown('<div class="fstrip-wrap">', unsafe_allow_html=True)
 fc1, fc2, fc3, fc4, fc5 = st.columns([2, 2, 2, 3, 2])
 
 with fc1:
@@ -464,28 +633,8 @@ with fc4:
 with fc5:
     min_rat = st.slider("⭐ Min Rating", 0.0, 5.0, 0.0, 0.5)
 
-st.markdown("</div>", unsafe_allow_html=True)
 
 # ── global search bar ──
-st.markdown("""
-<style>
-.gsearch-wrap {
-    background:#FAF7F2; border-bottom:1px solid #E8E2D9;
-    padding:.65rem 3.5rem;
-}
-.gsearch-wrap .stTextInput input {
-    border-radius:30px !important;
-    font-size:14px !important;
-    border-color:#E8E2D9 !important;
-    background:#fff !important;
-}
-.gsearch-wrap .stTextInput input:focus {
-    border-color:#C7522A !important;
-    box-shadow:0 0 0 3px rgba(199,82,42,.12) !important;
-}
-</style>
-""", unsafe_allow_html=True)
-
 st.markdown('<div class="gsearch-wrap">', unsafe_allow_html=True)
 gs_col, gs_info = st.columns([4, 1])
 with gs_col:
@@ -497,13 +646,13 @@ with gs_col:
     )
 with gs_info:
     st.markdown("""
-    <div style="padding-top:.4rem;font-size:11px;color:#8896A5;line-height:1.6;">
+    <div style="padding-top:.4rem;font-size:11px;color:#5C6478;line-height:1.6;">
       Searches name, area,<br>reviews &amp; tags
     </div>""", unsafe_allow_html=True)
 st.markdown("</div>", unsafe_allow_html=True)
 
 # ─────────────────────────────────────────────
-#  FILTER LOGIC  (dropdowns + sliders + global search)
+#  FILTER LOGIC
 # ─────────────────────────────────────────────
 fdf = df.copy()
 if sel_loc    != "All Areas": fdf = fdf[fdf["Location"] == sel_loc]
@@ -512,7 +661,6 @@ if sel_share  != "Any":       fdf = fdf[fdf["Sharing"]  == sel_share]
 fdf = fdf[fdf["Cost"]   <= budget]
 fdf = fdf[fdf["Rating"] >= min_rat]
 
-# global keyword search — hits name, location, comments, sharing, gender, and tags
 if global_search.strip():
     q = global_search.strip()
     tag_match  = fdf["Tags"].apply(lambda ts: any(q.lower() in t.lower() for t in ts))
@@ -598,7 +746,6 @@ with t1:
 
         left, right = st.columns([1, 1], gap="large")
 
-        # ── Card list ──
         with left:
             show_n  = min(10, len(fdf))
             ranks   = ["🥇","🥈","🥉"] + [f"#{i+1}" for i in range(3, show_n)]
@@ -643,13 +790,12 @@ with t1:
                     if st.button("📋 Copy Details", key=f"cp_{i}"):
                         st.code(f"{row['Name']} | {row['Location']} | ₹{int(row['Cost']):,}/mo | ⭐{row['Rating']:.1f} | {row['Phone']}")
 
-        # ── Right panel: chart + area table ──
         with right:
             st.markdown("""
             <div class="sec-head">
               <span class="sec-title">Value Matrix</span>
             </div>
-            <p style="font-size:13px;color:#8896A5;margin-bottom:.7rem;">
+            <p style="font-size:13px;color:#5C6478;margin-bottom:.7rem;">
               Top-left corner = best deal. Bubble size = value score.
             </p>""", unsafe_allow_html=True)
 
@@ -663,25 +809,25 @@ with t1:
                 color_discrete_sequence=CHART_COLORS,
                 template="simple_white",
             )
-            fig.add_hline(y=4.0, line_dash="dot", line_color="#2D7D5A",
-                          annotation_text="Quality bar (4★)", annotation_font_color="#2D7D5A")
+            fig.add_hline(y=4.0, line_dash="dot", line_color="#00C9A7",
+                          annotation_text="Quality bar (4★)", annotation_font_color="#00C9A7")
             fig.update_layout(
                 **base_layout(360),
-                legend=dict(orientation="h", y=-0.14, x=0, font_size=10),
+                legend=dict(orientation="h", y=-0.14, x=0, font_size=10, font_color="#9AA3B5",
+                            bgcolor="rgba(0,0,0,0)"),
                 xaxis_title="Monthly Rent (₹)", yaxis_title="Rating",
             )
             fig.update_yaxes(range=[0, 5.5])
-            fig.update_traces(marker=dict(opacity=0.85, line=dict(width=1.5, color="white")))
+            fig.update_traces(marker=dict(opacity=0.9, line=dict(width=1.5, color="rgba(255,255,255,.1)")))
             style_axes(fig)
             st.plotly_chart(fig, use_container_width=True)
 
-            # area summary
             area_stats = (fdf.groupby("Location")
                           .agg(avg_rent=("Cost","mean"), avg_rating=("Rating","mean"), count=("Name","count"))
                           .sort_values("avg_rent"))
             rows_html = "".join(f"""
             <div class="irow">
-              <span>📍 {area} <span style="color:#8896A5;font-size:11px;">({int(row['count'])} PGs)</span></span>
+              <span>📍 {area} <span style="color:#3A4155;font-size:11px;">({int(row['count'])} PGs)</span></span>
               <span class="ival">₹{int(row['avg_rent']):,} · {row['avg_rating']:.1f}⭐</span>
             </div>""" for area, row in area_stats.iterrows())
             st.markdown(f"""
@@ -711,10 +857,11 @@ with t2:
 
         with r2:
             st.markdown('<div class="chart-title">Room Type Share</div><div class="chart-sub">Market split by sharing preference.</div>', unsafe_allow_html=True)
-            fig_pie = px.pie(fdf, names="Sharing", hole=0.55,
-                             color_discrete_sequence=["#1C2430","#C7522A","#2D7D5A","#B45309","#1D4ED8","#7C3AED"],
+            fig_pie = px.pie(fdf, names="Sharing", hole=0.58,
+                             color_discrete_sequence=CHART_COLORS,
                              template="simple_white")
-            fig_pie.update_traces(textposition="outside", textinfo="label+percent", textfont_size=11)
+            fig_pie.update_traces(textposition="outside", textinfo="label+percent",
+                                  textfont_size=11, textfont_color="#9AA3B5")
             fig_pie.update_layout(**base_layout(300), showlegend=False)
             st.plotly_chart(fig_pie, use_container_width=True)
 
@@ -724,11 +871,11 @@ with t2:
             aa = fdf.groupby("Location")["Cost"].mean().sort_values().reset_index()
             fig_bar = px.bar(aa, x="Cost", y="Location", orientation="h",
                              template="simple_white", color="Cost",
-                             color_continuous_scale=["#FDF4EC","#C7522A"],
+                             color_continuous_scale=["#1A1F2E","#F5A623"],
                              text=aa["Cost"].apply(lambda x: f"₹{int(x):,}"))
             fig_bar.update_layout(**base_layout(280), coloraxis_showscale=False,
                                   showlegend=False, xaxis_title="Avg Rent (₹)", yaxis_title="")
-            fig_bar.update_traces(textposition="outside")
+            fig_bar.update_traces(textposition="outside", textfont_color="#9AA3B5")
             style_axes(fig_bar)
             st.plotly_chart(fig_bar, use_container_width=True)
 
@@ -736,7 +883,7 @@ with t2:
             st.markdown('<div class="chart-title">Ratings Distribution</div><div class="chart-sub">How PGs are rated overall.</div>', unsafe_allow_html=True)
             fig_hist = px.histogram(fdf[fdf["Rating"] > 0], x="Rating", nbins=10,
                                     template="simple_white",
-                                    color_discrete_sequence=["#C7522A"])
+                                    color_discrete_sequence=["#F5A623"])
             fig_hist.update_layout(**base_layout(280), bargap=0.1,
                                    xaxis_title="Rating", yaxis_title="No. of PGs")
             style_axes(fig_hist)
@@ -747,11 +894,12 @@ with t2:
             st.markdown('<div class="chart-title">Does Paying More Mean Better?</div><div class="chart-sub">Cost vs rating with trend line.</div>', unsafe_allow_html=True)
             fig_sc = px.scatter(fdf[fdf["Rating"] > 0], x="Cost", y="Rating",
                                 color="Sharing", hover_name="Name",
-                                opacity=0.65,
+                                opacity=0.75,
                                 template="simple_white",
-                                color_discrete_sequence=["#C7522A","#2D7D5A","#1C2430","#B45309"])
+                                color_discrete_sequence=CHART_COLORS)
             fig_sc.update_layout(**base_layout(260),
-                                 legend=dict(orientation="h", y=-0.2, font_size=11),
+                                 legend=dict(orientation="h", y=-0.2, font_size=11,
+                                             font_color="#9AA3B5", bgcolor="rgba(0,0,0,0)"),
                                  xaxis_title="Monthly Rent (₹)", yaxis_title="Rating")
             style_axes(fig_sc)
             st.plotly_chart(fig_sc, use_container_width=True)
@@ -762,7 +910,7 @@ with t2:
             gc.columns = ["Gender","Count"]
             fig_gen = px.bar(gc, x="Gender", y="Count", template="simple_white",
                              color="Gender",
-                             color_discrete_sequence=["#C7522A","#2D7D5A","#1C2430","#B45309","#7C3AED"])
+                             color_discrete_sequence=CHART_COLORS)
             fig_gen.update_layout(**base_layout(260), showlegend=False,
                                   xaxis_title="", yaxis_title="No. of PGs")
             style_axes(fig_gen)
@@ -776,8 +924,7 @@ with t3:
         st.info("No PGs to display on map.")
     else:
         st.markdown("""
-        <div style="background:#FFFBEB;border:1px solid #FDE68A;border-radius:12px;
-             padding:.65rem 1rem;margin-bottom:1rem;font-size:13px;color:#92400E;">
+        <div class="map-note">
           📌 <strong>Note:</strong> Pins are placed at area centre points, not exact addresses.
           Call the owner for precise location.
         </div>""", unsafe_allow_html=True)
@@ -792,15 +939,17 @@ with t3:
             hover_data={"Location":True,"Cost":":₹,.0f","Rating":True,
                         "Sharing":True,"lat":False,"lon":False},
             color="Rating", size=[12]*len(map_df),
-            color_continuous_scale=["#E11D48","#F59E0B","#2D7D5A"],
+            color_continuous_scale=["#F0546B","#F5A623","#00C9A7"],
             range_color=[0, 5], zoom=11, height=560,
         )
         fig_map.update_layout(
-            mapbox_style="carto-positron",
+            mapbox_style="carto-darkmatter",
             margin=dict(t=0,b=0,l=0,r=0),
             coloraxis_colorbar=dict(title="Rating", len=0.45, thickness=12,
-                                    tickfont=dict(family="Epilogue", size=11)),
-            font=dict(family="Epilogue"),
+                                    tickfont=dict(family="DM Sans", size=11, color="#9AA3B5"),
+                                    titlefont=dict(color="#9AA3B5")),
+            font=dict(family="DM Sans"),
+            paper_bgcolor="rgba(0,0,0,0)",
         )
         st.plotly_chart(fig_map, use_container_width=True)
 
@@ -853,7 +1002,7 @@ st.markdown("</div>", unsafe_allow_html=True)
 # ─────────────────────────────────────────────
 st.markdown("""
 <div class="footer">
-  Community data from <strong style="color:#8896A5;">Reddit r/hyderabad</strong>
+  Community data from <strong style="color:#5C6478;">Reddit r/hyderabad</strong>
   &nbsp;·&nbsp; Built with Python & Streamlit
   &nbsp;·&nbsp; <a href="https://github.com/prosuvinhere/Hyd_PG">⭐ Star on GitHub</a>
 </div>
