@@ -2,7 +2,8 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import plotly.express as px
-import os
+import requests
+from datetime import datetime
 
 # ─────────────────────────────────────────────
 #  PAGE CONFIG
@@ -13,37 +14,42 @@ st.set_page_config(
 )
 
 # ─────────────────────────────────────────────
-#  VIEW COUNTER LOGIC (FILE-BASED)
+#  MONTHLY USERS COUNTER (API-BASED)
 # ─────────────────────────────────────────────
-COUNTER_FILE = "view_count.txt"
+NAMESPACE = "hyderabad_pg_directory_reddit" 
 
-# Only increment if this specific user hasn't logged a view yet in this session
+# Creates a new counter key every month (e.g., "monthly_users_2026_10")
+# This ensures the count automatically starts from 0 on the 1st of each month.
+current_month = datetime.now().strftime("%Y_%m")
+COUNTER_NAME = f"monthly_users_{current_month}"
+
+API_URL = f"https://api.counterapi.dev/v1/{NAMESPACE}/{COUNTER_NAME}"
+
+# Start at 0
+current_monthly_users = 0
+
+# Only increment if this specific user hasn't logged a visit yet in this session
 if "view_logged" not in st.session_state:
-    if os.path.exists(COUNTER_FILE):
-        with open(COUNTER_FILE, "r") as f:
-            try:
-                count = int(f.read().strip())
-            except ValueError:
-                count = 2000
-    else:
-        count = 2000
-        
-    # Increment and save
-    count += 1
-    with open(COUNTER_FILE, "w") as f:
-        f.write(str(count))
+    try:
+        response = requests.get(f"{API_URL}/up", timeout=5)
+        if response.status_code == 200:
+            current_monthly_users = response.json().get("count", 0)
+            st.session_state.current_monthly_users = current_monthly_users
+    except Exception:
+        pass # Fail silently if API is unreachable
         
     st.session_state.view_logged = True
 
-# Read the current count for display
-if os.path.exists(COUNTER_FILE):
-    with open(COUNTER_FILE, "r") as f:
-        try:
-            current_views = int(f.read().strip())
-        except ValueError:
-            current_views = 2000
 else:
-    current_views = 2000
+    # If they already logged a visit, just fetch the current count without incrementing
+    try:
+        response = requests.get(API_URL, timeout=5)
+        if response.status_code == 200:
+            current_monthly_users = response.json().get("count", 0)
+            st.session_state.current_monthly_users = current_monthly_users
+    except Exception:
+        current_monthly_users = st.session_state.get("current_monthly_users", 0)
+
 
 # ─────────────────────────────────────────────
 #  NAVIGATION
@@ -55,7 +61,7 @@ page = st.sidebar.radio(
 
 # Display the counter at the bottom of the sidebar
 st.sidebar.divider()
-st.sidebar.metric("👁️ Total Views", f"{current_views:,}")
+st.sidebar.metric("📅 Monthly Users", f"{current_monthly_users:,}")
 
 
 # ─────────────────────────────────────────────
