@@ -23,25 +23,32 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
+
+def render_html(raw_html: str) -> None:
+    """
+    Renders multi-line HTML safely in Streamlit by collapsing line breaks and
+    indentation so CommonMark never splits an HTML block into a code block.
+    """
+    compact = " ".join(line.strip() for line in raw_html.splitlines() if line.strip())
+    st.markdown(compact, unsafe_allow_html=True)
+
+
 # ─────────────────────────────────────────────────────────────────────────────
 #  DESIGN SYSTEM & CUSTOM CSS
 # ─────────────────────────────────────────────────────────────────────────────
 st.markdown(
     """
     <style>
-    /* Global layout refinements */
     .block-container {
-        padding-top: 1.75rem;
+        padding-top: 1.5rem;
         padding-bottom: 3rem;
         max-width: 1380px;
     }
-
-    /* Top masthead */
     .masthead {
         border: 1px solid rgba(148, 163, 184, 0.25);
         border-radius: 14px;
-        padding: 1.35rem 1.6rem;
-        margin-bottom: 1.25rem;
+        padding: 1.3rem 1.55rem;
+        margin-bottom: 1.2rem;
         background: linear-gradient(135deg, rgba(30, 41, 59, 0.04) 0%, rgba(15, 23, 42, 0.01) 100%);
     }
     .masthead-top {
@@ -52,14 +59,14 @@ st.markdown(
         gap: 1rem;
     }
     .masthead-title {
-        font-size: 1.55rem;
+        font-size: 1.5rem;
         font-weight: 700;
         letter-spacing: -0.02em;
-        margin: 0 0 0.3rem 0;
+        margin: 0 0 0.28rem 0;
         line-height: 1.25;
     }
     .masthead-sub {
-        font-size: 0.92rem;
+        font-size: 0.91rem;
         opacity: 0.78;
         margin: 0;
         max-width: 760px;
@@ -75,7 +82,7 @@ st.markdown(
         display: inline-flex;
         align-items: center;
         gap: 0.35rem;
-        padding: 0.42rem 0.85rem;
+        padding: 0.42rem 0.88rem;
         border-radius: 8px;
         font-size: 0.82rem;
         font-weight: 600;
@@ -98,13 +105,11 @@ st.markdown(
     .btn-outline:hover {
         background-color: rgba(148, 163, 184, 0.18);
     }
-
-    /* Summary KPI strip */
     .kpi-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
         gap: 0.85rem;
-        margin-bottom: 1.25rem;
+        margin-bottom: 1.2rem;
     }
     .kpi-box {
         border: 1px solid rgba(148, 163, 184, 0.22);
@@ -113,15 +118,15 @@ st.markdown(
         background-color: rgba(148, 163, 184, 0.03);
     }
     .kpi-label {
-        font-size: 0.75rem;
+        font-size: 0.74rem;
         text-transform: uppercase;
         letter-spacing: 0.05em;
         opacity: 0.68;
         font-weight: 600;
-        margin-bottom: 0.25rem;
+        margin-bottom: 0.22rem;
     }
     .kpi-val {
-        font-size: 1.35rem;
+        font-size: 1.32rem;
         font-weight: 700;
         letter-spacing: -0.01em;
         line-height: 1.2;
@@ -131,8 +136,6 @@ st.markdown(
         opacity: 0.72;
         margin-top: 0.2rem;
     }
-
-    /* Property Listing Card */
     .prop-card {
         border: 1px solid rgba(148, 163, 184, 0.26);
         border-radius: 12px;
@@ -153,9 +156,9 @@ st.markdown(
         margin-bottom: 0.65rem;
     }
     .prop-name {
-        font-size: 1.15rem;
+        font-size: 1.14rem;
         font-weight: 700;
-        margin: 0 0 0.3rem 0;
+        margin: 0 0 0.35rem 0;
         letter-spacing: -0.01em;
     }
     .prop-meta {
@@ -163,8 +166,8 @@ st.markdown(
         flex-wrap: wrap;
         gap: 0.45rem;
         align-items: center;
-        font-size: 0.83rem;
-        opacity: 0.86;
+        font-size: 0.82rem;
+        opacity: 0.88;
     }
     .prop-price-block {
         text-align: right;
@@ -192,8 +195,6 @@ st.markdown(
     .elec-sep {
         color: #f59e0b;
     }
-
-    /* Badges & Pills */
     .badge {
         display: inline-block;
         padding: 0.16rem 0.55rem;
@@ -226,13 +227,11 @@ st.markdown(
         background-color: rgba(148, 163, 184, 0.14);
         border: 1px solid rgba(148, 163, 184, 0.28);
     }
-
-    /* Specs strip inside card */
     .specs-strip {
         display: flex;
         flex-wrap: wrap;
-        gap: 0.5rem 1.15rem;
-        padding: 0.55rem 0.75rem;
+        gap: 0.5rem 1.2rem;
+        padding: 0.55rem 0.8rem;
         border-radius: 8px;
         background-color: rgba(148, 163, 184, 0.06);
         margin: 0.6rem 0;
@@ -249,16 +248,14 @@ st.markdown(
     .spec-val {
         font-weight: 600;
     }
-
-    /* Feature & warning tags */
     .tag-row {
         display: flex;
         flex-wrap: wrap;
-        gap: 0.38rem;
+        gap: 0.4rem;
         margin: 0.55rem 0;
     }
     .tag-pos {
-        padding: 0.14rem 0.52rem;
+        padding: 0.15rem 0.55rem;
         border-radius: 999px;
         font-size: 0.74rem;
         font-weight: 500;
@@ -267,7 +264,7 @@ st.markdown(
         border: 1px solid rgba(16, 185, 129, 0.28);
     }
     .tag-warn {
-        padding: 0.14rem 0.52rem;
+        padding: 0.15rem 0.55rem;
         border-radius: 999px;
         font-size: 0.74rem;
         font-weight: 600;
@@ -275,20 +272,15 @@ st.markdown(
         color: #ef4444;
         border: 1px solid rgba(239, 68, 68, 0.32);
     }
-
-    /* Review text block */
     .review-box {
         font-size: 0.89rem;
         line-height: 1.55;
-        padding: 0.65rem 0.85rem;
+        padding: 0.65rem 0.9rem;
         border-left: 3px solid rgba(59, 130, 246, 0.45);
         background-color: rgba(148, 163, 184, 0.04);
         border-radius: 0 8px 8px 0;
         margin: 0.65rem 0;
-        white-space: pre-line;
     }
-
-    /* Card footer */
     .prop-footer {
         display: flex;
         justify-content: space-between;
@@ -333,7 +325,7 @@ st.markdown(
 )
 
 # ─────────────────────────────────────────────────────────────────────────────
-#  CONSTANTS & REFERENCE DATA
+#  CONSTANTS & GEOSPATIAL REFERENCE DATA
 # ─────────────────────────────────────────────────────────────────────────────
 SHEET_CSV_URL = (
     "https://docs.google.com/spreadsheets/d/"
@@ -343,7 +335,6 @@ FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLScXRf8vHeXwMeAbY_QLGDjGYemx
 SHEET_EDIT_URL = "https://docs.google.com/spreadsheets/d/1AW4EKm412u_UyYhf1swdhDsP5ikadr3XXeUTMrqvh4w/edit"
 LOCAL_CSV_PATH = os.path.join(os.path.dirname(__file__), "pg_data.csv")
 
-# Coordinates for 34 Hyderabad residential localities
 COORDS = {
     "Madhapur": (17.4483, 78.3915),
     "Gachibowli": (17.4401, 78.3489),
@@ -382,9 +373,8 @@ COORDS = {
     "Unknown": (17.4400, 78.3800),
 }
 
-# Major employment hubs for commute distance calculation
 OFFICE_HUBS = {
-    "None (Don't filter by office)": None,
+    "None (All Hyderabad)": None,
     "Mindspace / Raheja IT Park (HITEC City)": (17.4422, 78.3774),
     "DLF Cyber City / Gachibowli": (17.4485, 78.3548),
     "Financial District / WaveRock / Nanakramguda": (17.4158, 78.3426),
@@ -555,21 +545,17 @@ def clean_phone(raw_phone) -> tuple[str, str]:
 
 
 def extract_highlights_and_warnings(row: pd.Series) -> tuple[list[str], list[str]]:
-    """Extracts structured positive amenity highlights and red-flag warnings from reviews."""
     text = str(row.get("Comments", "")).lower()
     pos, warn = [], []
 
-    # Wi-Fi
     if any(w in text for w in ["slow wifi", "slow wi-fi", "wifi is slow", "wi-fi speed can be slow", "wifi speed low", "ping is shit"]):
         warn.append("Slow Wi-Fi")
     elif any(w in text for w in ["wifi", "wi-fi", "internet"]):
         pos.append("Reliable Wi-Fi")
 
-    # Transit
     if any(w in text for w in ["metro", "bus stop", "public transport", "walkable", "walking distance"]):
         pos.append("Walkable to Transit")
 
-    # Amenities
     if "no gym" not in text and any(w in text for w in ["gym", "fitness"]):
         pos.append("Gym")
     if "no game" not in text and any(w in text for w in ["pool table", "indoor games", "gaming zone", "box cricket", "play area"]):
@@ -587,7 +573,6 @@ def extract_highlights_and_warnings(row: pd.Series) -> tuple[list[str], list[str
     if any(w in text for w in ["clean daily", "daily cleaning", "very neat", "hygenic", "cleaned every"]):
         pos.append("Regular Housekeeping")
 
-    # Red flags
     if any(w in text for w in ["bed bug", "bedbug", "cockroach", "insects", "pest", "rot"]):
         warn.append("Pest / Hygiene Issue")
     if any(w in text for w in ["rude", "horrible", "not give back the advance", "micromanager", "trash"]):
@@ -671,17 +656,23 @@ def load_data() -> tuple[pd.DataFrame, str]:
     df["HighlightsStr"] = df["Highlights"].apply(lambda x: ", ".join(x) if x else "—")
     df["WarningsStr"] = df["Warnings"].apply(lambda x: ", ".join(x) if x else "None")
 
-    # Composite Quality Score (70% Overall Rating + 30% Food Quality) & Value Index
+    # Composite Quality Score (70% Overall Rating + 30% Food Quality)
     df["CompositeRating"] = np.where(
         df["FoodRating"] > 0,
         (df["Rating"] * 0.7 + df["FoodRating"] * 0.3).round(2),
         df["Rating"],
     )
-    df["ValueScore"] = np.where(
-        df["EstTotalCost"] > 0,
-        ((df["CompositeRating"] ** 2) / df["EstTotalCost"]) * 5000.0,
-        0.0,
-    ).round(2)
+
+    # Sharing-Adjusted Value Score (compares rent against the median rent of the SAME sharing tier)
+    sharing_medians = df.groupby("Sharing")["EstTotalCost"].transform("median")
+    relative_cost_ratio = (df["EstTotalCost"] / sharing_medians).clip(0.5, 2.0)
+    df["ValueScore"] = ((df["CompositeRating"] / relative_cost_ratio) * 2.0).round(2)
+
+    # Smart Recommendation Rank Score (prioritizes high ratings, fair value, detailed reviews, and verified phone)
+    has_review_bonus = np.where(df["Comments"].str.len() >= 25, 1.2, 0.0)
+    has_phone_bonus = np.where(df["PhoneDigits"] != "", 0.5, 0.0)
+    warning_penalty = df["Warnings"].apply(lambda w: 1.5 if len(w) > 0 else 0.0)
+    df["RecScore"] = (df["ValueScore"] + has_review_bonus + has_phone_bonus - warning_penalty).round(2)
 
     # Locality Coordinates + Deterministic Offset for Map Display
     rng = np.random.default_rng(42)
@@ -857,7 +848,7 @@ if search_query.strip():
 # ─────────────────────────────────────────────────────────────────────────────
 #  MASTHEAD BANNER
 # ─────────────────────────────────────────────────────────────────────────────
-st.markdown(
+render_html(
     f"""
     <div class="masthead">
         <div class="masthead-top">
@@ -874,8 +865,7 @@ st.markdown(
             </div>
         </div>
     </div>
-    """,
-    unsafe_allow_html=True,
+    """
 )
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -899,7 +889,6 @@ with tab_directory:
     if fdf.empty:
         st.info("No PGs match your current filter settings. Try increasing the budget slider or clearing sidebar filters.")
     else:
-        # Compute KPI summary
         med_rent = int(fdf["Cost"].median())
         avg_rent = int(fdf["Cost"].mean())
         rated_sub = fdf[fdf["Rating"] > 0]
@@ -908,7 +897,7 @@ with tab_directory:
         elec_inc_pct = int(round((fdf["Electricity"] == "Included in rent").mean() * 100))
         with_phone_cnt = int((fdf["PhoneDigits"] != "").sum())
 
-        st.markdown(
+        render_html(
             f"""
             <div class="kpi-grid">
                 <div class="kpi-box">
@@ -932,15 +921,14 @@ with tab_directory:
                     <div class="kpi-sub">Include electricity in base rent</div>
                 </div>
             </div>
-            """,
-            unsafe_allow_html=True,
+            """
         )
 
         # Controls Bar: Sort, View Switcher, Export
         ctrl1, ctrl2, ctrl3 = st.columns([1.8, 1.4, 1.0])
         with ctrl1:
             sort_options = [
-                "Recommended (Best Value & Rating)",
+                "Recommended (Best Reviewed & Fair Value)",
                 "Highest Resident Rating",
                 "Lowest Monthly Rent",
                 "Highest Food Quality",
@@ -985,9 +973,9 @@ with tab_directory:
 
         # Apply Sorting
         if sort_choice == "Closest to Selected Office Hub":
-            fdf = fdf.sort_values(["OfficeDistKm", "ValueScore"], ascending=[True, False])
-        elif sort_choice == "Recommended (Best Value & Rating)":
-            fdf = fdf.sort_values(["ValueScore", "CompositeRating", "Cost"], ascending=[False, False, True])
+            fdf = fdf.sort_values(["OfficeDistKm", "RecScore"], ascending=[True, False])
+        elif sort_choice == "Recommended (Best Reviewed & Fair Value)":
+            fdf = fdf.sort_values(["RecScore", "CompositeRating", "Cost"], ascending=[False, False, True])
         elif sort_choice == "Highest Resident Rating":
             fdf = fdf.sort_values(["Rating", "FoodRating", "Cost"], ascending=[False, False, True])
         elif sort_choice == "Lowest Monthly Rent":
@@ -1003,7 +991,7 @@ with tab_directory:
         if view_mode == "Review Cards":
             page_size = 10
             total_pages = max(1, math.ceil(len(fdf) / page_size))
-            pcol1, pcol2, pcol3 = st.columns([1.2, 2.0, 1.2])
+            pcol1, pcol2, _ = st.columns([1.1, 2.2, 1.5])
             with pcol1:
                 curr_page = st.number_input("Page", min_value=1, max_value=total_pages, value=1, step=1)
             with pcol2:
@@ -1021,56 +1009,58 @@ with tab_directory:
                 pg_type = str(row["PGType"])
 
                 if pg_type == "Men's PG":
-                    type_badge = '<span class="badge badge-male">Men\'s PG</span>'
+                    type_badge = "<span class='badge badge-male'>Men's PG</span>"
                 elif pg_type == "Women's PG":
-                    type_badge = '<span class="badge badge-female">Women\'s PG</span>'
+                    type_badge = "<span class='badge badge-female'>Women's PG</span>"
                 else:
-                    type_badge = '<span class="badge badge-colive">Co-Living</span>'
+                    type_badge = "<span class='badge badge-colive'>Co-Living</span>"
 
-                commute_pill = ""
-                if pd.notna(row.get("OfficeDistKm")):
-                    commute_pill = f'<span class="badge badge-neutral">~{row["OfficeDistKm"]} km to Office</span>'
+                commute_pill = (
+                    f"<span class='badge badge-neutral'>~{row['OfficeDistKm']} km to Office</span>"
+                    if pd.notna(row.get("OfficeDistKm"))
+                    else ""
+                )
 
                 elec_is_inc = row["Electricity"] == "Included in rent"
                 elec_html = (
-                    '<div class="prop-elec elec-inc">✓ Electricity included</div>'
+                    "<div class='prop-elec elec-inc'>✓ Electricity included</div>"
                     if elec_is_inc
-                    else f'<div class="prop-elec elec-sep">+ Separate electricity (~₹{int(row["EstTotalCost"]):,}/mo est.)</div>'
+                    else f"<div class='prop-elec elec-sep'>+ Separate electricity (~₹{int(row['EstTotalCost']):,}/mo est.)</div>"
                 )
 
-                # Tags row
                 tags_parts = []
                 for h_tag in row["Highlights"]:
-                    tags_parts.append(f'<span class="tag-pos">✓ {html.escape(h_tag)}</span>')
+                    tags_parts.append(f"<span class='tag-pos'>✓ {html.escape(h_tag)}</span>")
                 for w_tag in row["Warnings"]:
-                    tags_parts.append(f'<span class="tag-warn">! {html.escape(w_tag)}</span>')
-                tags_row_html = f'<div class="tag-row">{"".join(tags_parts)}</div>' if tags_parts else ""
+                    tags_parts.append(f"<span class='tag-warn'>! {html.escape(w_tag)}</span>")
+                tags_row_html = f"<div class='tag-row'>{''.join(tags_parts)}</div>" if tags_parts else ""
 
-                # Review body
                 raw_comment = str(row["Comments"]).strip()
                 if raw_comment:
-                    comment_html = f'<div class="review-box">{html.escape(raw_comment)}</div>'
+                    formatted_comment = "<br>".join(
+                        html.escape(line) for line in raw_comment.splitlines()
+                    )
+                    comment_html = f"<div class='review-box'>{formatted_comment}</div>"
                 else:
-                    comment_html = '<div style="font-size:0.83rem;opacity:0.6;margin:0.45rem 0;">No written commentary submitted — structured ratings only.</div>'
+                    comment_html = "<div style='font-size:0.83rem;opacity:0.6;margin:0.45rem 0;'>No written commentary submitted — structured ratings only.</div>"
 
-                # Footer links & contributor
                 date_str = row["SubmittedAt"].strftime("%b %d, %Y") if pd.notna(row["SubmittedAt"]) else "Community Verified"
                 contrib_esc = html.escape(str(row["Contributor"]))
 
                 action_links = [
-                    f'<a class="card-link" href="{row["MapsURL"]}" target="_blank" rel="noopener">Google Maps ↗</a>'
+                    f"<a class='card-link' href='{row['MapsURL']}' target='_blank' rel='noopener'>Google Maps ↗</a>"
                 ]
                 if row["PhoneDigits"]:
                     action_links.append(
-                        f'<a class="card-link card-link-wa" href="https://wa.me/91{row["PhoneDigits"]}" target="_blank" rel="noopener">WhatsApp Owner ↗</a>'
+                        f"<a class='card-link card-link-wa' href='https://wa.me/91{row['PhoneDigits']}' target='_blank' rel='noopener'>WhatsApp Owner ↗</a>"
                     )
                     action_links.append(
-                        f'<a class="card-link" href="tel:+91{row["PhoneDigits"]}">Call {html.escape(row["Phone"])}</a>'
+                        f"<a class='card-link' href='tel:+91{row['PhoneDigits']}'>Call {html.escape(row['Phone'])}</a>"
                     )
                 else:
-                    action_links.append('<span style="font-size:0.76rem;opacity:0.55;padding:0.25rem 0.4rem;">No phone listed</span>')
+                    action_links.append("<span style='font-size:0.76rem;opacity:0.55;padding:0.25rem 0.4rem;'>No phone listed</span>")
 
-                st.markdown(
+                render_html(
                     f"""
                     <div class="prop-card">
                         <div class="prop-header">
@@ -1094,17 +1084,16 @@ with tab_directory:
                             <div class="spec-item"><span class="spec-label">Food Quality:</span> <span class="spec-val">{row['FoodRating']:.1f} / 5</span></div>
                             <div class="spec-item"><span class="spec-label">Room Space:</span> <span class="spec-val">{html.escape(row['RoomSpace'])}</span></div>
                             <div class="spec-item"><span class="spec-label">Parking:</span> <span class="spec-val">{html.escape(row['ParkingCategory'])}</span></div>
-                            <div class="spec-item"><span class="spec-label">Value Index:</span> <span class="spec-val">{row['ValueScore']:.1f}</span></div>
+                            <div class="spec-item"><span class="spec-label">Value Score:</span> <span class="spec-val">{row['ValueScore']:.1f} / 10</span></div>
                         </div>
                         {tags_row_html}
                         {comment_html}
                         <div class="prop-footer">
                             <div class="prop-credit">Reviewed by <b>{contrib_esc}</b> • {date_str}</div>
-                            <div class="prop-links">{"".join(action_links)}</div>
+                            <div class="prop-links">{''.join(action_links)}</div>
                         </div>
                     </div>
-                    """,
-                    unsafe_allow_html=True,
+                    """
                 )
 
         # ── VIEW B: COMPACT DATA TABLE ──
@@ -1145,10 +1134,10 @@ with tab_directory:
                     "Rating": st.column_config.NumberColumn("Rating", format="%.1f ★"),
                     "FoodRating": st.column_config.NumberColumn("Food", format="%.1f ★"),
                     "ValueScore": st.column_config.ProgressColumn(
-                        "Value Index",
+                        "Value Score",
                         format="%.1f",
                         min_value=0,
-                        max_value=float(max(15.0, df_all["ValueScore"].max())),
+                        max_value=float(max(12.0, df_all["ValueScore"].max())),
                     ),
                     "RoomSpace": st.column_config.TextColumn("Space", width="small"),
                     "ParkingCategory": st.column_config.TextColumn("Parking", width="small"),
@@ -1164,7 +1153,7 @@ with tab_directory:
 #  TAB 2: FAIR RENT CALCULATOR & MARKET INSIGHTS
 # ═════════════════════════════════════════════════════════════════════════════
 with tab_calculator:
-    st.subheader("Fair Rent Benchmark Calculator — \"Am I Overpaying?\"")
+    st.subheader('Fair Rent Benchmark Calculator — "Am I Overpaying?"')
     st.caption(
         "Check whether a quoted rent is fair compared to actual resident-reported rents in the same locality and room configuration."
     )
@@ -1180,14 +1169,12 @@ with tab_calculator:
     with bcol4:
         quoted_rent = st.number_input("Quoted Monthly Rent (₹)", min_value=3000, max_value=50000, value=12000, step=500)
 
-    # Filter benchmark sample
     bench_df = df_all[df_all["Sharing"] == calc_sharing].copy()
     if calc_loc != "All Hyderabad":
         bench_df = bench_df[bench_df["Location"] == calc_loc]
     if calc_type != "Any":
         bench_df = bench_df[bench_df["PGType"] == calc_type]
 
-    # Broaden to same sharing citywide if sample is very small (< 3)
     sample_note = f"{len(bench_df)} exact matches in {calc_loc}"
     if len(bench_df) < 3:
         bench_df = df_all[df_all["Sharing"] == calc_sharing].copy()
@@ -1209,7 +1196,7 @@ with tab_calculator:
             verdict = f"Above Market Rate (+₹{diff:,} over median)"
             verdict_color = "#ef4444"
 
-        st.markdown(
+        render_html(
             f"""
             <div class="kpi-grid" style="margin-top:0.5rem;">
                 <div class="kpi-box">
@@ -1233,8 +1220,7 @@ with tab_calculator:
                     <div class="kpi-sub">Co-living / AC / luxury stays</div>
                 </div>
             </div>
-            """,
-            unsafe_allow_html=True,
+            """
         )
 
     st.divider()
@@ -1322,10 +1308,10 @@ with tab_calculator:
         st.plotly_chart(fig_box, use_container_width=True)
 
     with c_chart4:
-        st.markdown("**Top 10 Best Value-for-Money Stays (Rating ≥ 4.0)**")
+        st.markdown("**Top 10 Best Recommended Stays (Rating ≥ 4.0 & Verified)**")
         best_val_df = (
             df_all[(df_all["Rating"] >= 4.0) & (df_all["Warnings"].apply(len) == 0)]
-            .sort_values(["ValueScore", "CompositeRating"], ascending=[False, False])
+            .sort_values(["RecScore", "CompositeRating"], ascending=[False, False])
             .head(10)
         )
         st.dataframe(
@@ -1371,7 +1357,6 @@ with tab_compare:
     else:
         comp_rows = source_pool[source_pool["OptionLabel"].isin(chosen_labels)].copy()
 
-        # Structured Comparison Matrix Table
         matrix_records = []
         spec_fields = [
             ("Locality", "Location"),
@@ -1382,7 +1367,7 @@ with tab_compare:
             ("Est. All-In Monthly Cost", lambda r: f"₹{int(r['EstTotalCost']):,}/mo"),
             ("Overall Resident Rating", lambda r: f"{r['Rating']:.1f} / 5.0 ★"),
             ("Food Quality Rating", lambda r: f"{r['FoodRating']:.1f} / 5.0 ★"),
-            ("Value Index", lambda r: f"{r['ValueScore']:.1f}"),
+            ("Value Score (Tier-Adjusted)", lambda r: f"{r['ValueScore']:.1f} / 10"),
             ("Room Space", "RoomSpace"),
             ("Parking", "ParkingCategory"),
             ("Nearest Metro Station", lambda r: f"{r['NearestMetro']} (~{r['MetroDistKm']} km)"),
@@ -1436,7 +1421,6 @@ with tab_map:
 
     g_lat, g_lon = OFFICE_HUBS[guide_hub]
 
-    # Build aggregated Neighborhood Guide DataFrame
     area_summary = (
         df_all.groupby("Location", as_index=False)
         .agg(
@@ -1461,9 +1445,8 @@ with tab_map:
         axis=1,
     )
 
-    # Top PG per locality
     top_pg_per_loc = (
-        df_all.sort_values(["CompositeRating", "ValueScore"], ascending=[False, False])
+        df_all.sort_values(["RecScore", "CompositeRating"], ascending=[False, False])
         .groupby("Location", as_index=False)
         .first()[["Location", "Name"]]
         .rename(columns={"Name": "TopRatedPG"})
@@ -1471,7 +1454,6 @@ with tab_map:
     area_summary = area_summary.merge(top_pg_per_loc, on="Location", how="left")
     area_summary = area_summary.sort_values(["OfficeDistKm", "Listings"], ascending=[True, False]).reset_index(drop=True)
 
-    # Interactive Map (Supports Plotly 6+ MapLibre and Plotly 5 Mapbox with pure go.Figure fallback)
     color_field = "MedianRent" if map_color_by == "Median Monthly Rent (₹)" else "AvgRating"
     use_maplibre = hasattr(go, "Scattermap")
     trace_cls = go.Scattermap if use_maplibre else go.Scattermapbox
@@ -1530,7 +1512,6 @@ with tab_map:
             height=500,
         )
 
-    # Overlay Metro Lines
     metro_df = pd.DataFrame(METRO_STATIONS)
     line_colors = {"Blue Line": "#2563eb", "Red Line": "#dc2626", "Green Line": "#16a34a"}
     for line_name, ldf in metro_df.groupby("line", sort=False):
@@ -1547,7 +1528,6 @@ with tab_map:
             )
         )
 
-    # Overlay Reference Office Hub
     fig_map.add_trace(
         trace_cls(
             lat=[g_lat],
@@ -1651,6 +1631,6 @@ with tab_about:
             """
             * **Composite Rating:** Combines Overall Resident Rating ($70\\%$) and Food Quality Rating ($30\\%$).
             * **Estimated All-In Cost:** Adds an ₹800/mo buffer when electricity is billed separately so you can compare all-inclusive vs. metered PGs fairly.
-            * **Value Index:** Calculated as $\\frac{\\text{Composite Rating}^2}{\\text{Est. All-In Cost}} \\times 5000$, rewarding well-rated PGs that are reasonably priced.
+            * **Sharing-Adjusted Value Score:** Compares each PG's all-in cost against the median rent for the **same room-sharing tier** (Single vs. Single, 2-Sharing vs. 2-Sharing), so 2-sharing and single rooms in prime IT hubs are evaluated fairly alongside 4-sharing rooms.
             """
         )
