@@ -1149,42 +1149,113 @@ elif page == "🚇 Metro & Commute Map":
         mdf = mdf[mdf["PGType"] == map_pg_type]
     nearby_df = mdf[mdf["HubDistKm"] <= max_commute_km].sort_values(["HubDistKm", "ValueScore"], ascending=[True, False])
 
-    # ── BUILD INTERACTIVE PLOTLY MAPBOX ──
+    # ── BUILD INTERACTIVE PLOTLY MAP (Supports Plotly 6+ MapLibre & Plotly 5 Mapbox) ──
     color_col = {"Monthly Rent (₹)": "Cost", "Overall Rating": "Rating", "PG Type": "PGType"}[color_mode]
-    fig_map = px.scatter_mapbox(
-        mdf,
-        lat="lat",
-        lon="lon",
-        color=color_col,
-        hover_name="Name",
-        hover_data={
-            "Location": True,
-            "PGType": True,
-            "Sharing": True,
-            "Cost": ":₹,.0f",
-            "Rating": ":.1f",
-            "FoodRating": ":.1f",
-            "NearestMetro": True,
-            "MetroDistKm": True,
-            "HubDistKm": True,
-            "Phone": True,
-            "lat": False,
-            "lon": False,
-        },
-        zoom=11.2,
-        center={"lat": hub_lat, "lon": hub_lon},
-        height=560,
-        mapbox_style="carto-positron",
-        color_continuous_scale="Plasma" if color_col == "Cost" else "Viridis",
-    )
-    fig_map.update_traces(marker=dict(size=11, opacity=0.88))
+    use_maplibre = hasattr(go, "Scattermap")
+    trace_cls = go.Scattermap if use_maplibre else go.Scattermapbox
+
+    try:
+        if hasattr(px, "scatter_map"):
+            fig_map = px.scatter_map(
+                mdf,
+                lat="lat",
+                lon="lon",
+                color=color_col,
+                hover_name="Name",
+                hover_data={
+                    "Location": True,
+                    "PGType": True,
+                    "Sharing": True,
+                    "Cost": ":₹,.0f",
+                    "Rating": ":.1f",
+                    "FoodRating": ":.1f",
+                    "NearestMetro": True,
+                    "MetroDistKm": True,
+                    "HubDistKm": True,
+                    "Phone": True,
+                    "lat": False,
+                    "lon": False,
+                },
+                zoom=11.2,
+                center={"lat": hub_lat, "lon": hub_lon},
+                height=560,
+                map_style="carto-positron",
+                color_continuous_scale="Plasma" if color_col == "Cost" else "Viridis",
+            )
+        else:
+            fig_map = px.scatter_mapbox(
+                mdf,
+                lat="lat",
+                lon="lon",
+                color=color_col,
+                hover_name="Name",
+                hover_data={
+                    "Location": True,
+                    "PGType": True,
+                    "Sharing": True,
+                    "Cost": ":₹,.0f",
+                    "Rating": ":.1f",
+                    "FoodRating": ":.1f",
+                    "NearestMetro": True,
+                    "MetroDistKm": True,
+                    "HubDistKm": True,
+                    "Phone": True,
+                    "lat": False,
+                    "lon": False,
+                },
+                zoom=11.2,
+                center={"lat": hub_lat, "lon": hub_lon},
+                height=560,
+                mapbox_style="carto-positron",
+                color_continuous_scale="Plasma" if color_col == "Cost" else "Viridis",
+            )
+        fig_map.update_traces(marker=dict(size=11, opacity=0.88))
+    except Exception:
+        hover_texts = mdf.apply(
+            lambda r: (
+                f"<b>{r['Name']}</b><br>"
+                f"Area: {r['Location']} ({r['PGType']} • {r['Sharing']})<br>"
+                f"Rent: ₹{int(r['Cost']):,}/mo | Rating: {r['Rating']:.1f}⭐ | Food: {r['FoodRating']:.1f}🍴<br>"
+                f"Nearest Metro: {r['NearestMetro']} ({r['MetroDistKm']} km)<br>"
+                f"Dist to {work_hub}: {r['HubDistKm']} km | Phone: {r['Phone']}"
+            ),
+            axis=1,
+        )
+        fig_map = go.Figure(
+            trace_cls(
+                lat=mdf["lat"],
+                lon=mdf["lon"],
+                mode="markers",
+                name="🏠 PGs",
+                marker=dict(
+                    size=11,
+                    opacity=0.88,
+                    color=mdf["Cost"] if color_col == "Cost" else mdf["Rating"],
+                    colorscale="Plasma" if color_col == "Cost" else "Viridis",
+                    showscale=True,
+                ),
+                text=hover_texts,
+                hoverinfo="text",
+            )
+        )
+        layout_key = "map" if use_maplibre else "mapbox"
+        fig_map.update_layout(
+            **{
+                layout_key: dict(
+                    style="carto-positron",
+                    center=dict(lat=hub_lat, lon=hub_lon),
+                    zoom=11.2,
+                )
+            },
+            height=560,
+        )
 
     # Overlay Metro Lines & Stations
     metro_df = pd.DataFrame(METRO_STATIONS)
     line_colors = {"Blue Line": "#2563eb", "Red Line": "#dc2626", "Green Line": "#16a34a"}
     for line_name, ldf in metro_df.groupby("line", sort=False):
         fig_map.add_trace(
-            go.Scattermapbox(
+            trace_cls(
                 lat=ldf["lat"],
                 lon=ldf["lon"],
                 mode="lines+markers",
@@ -1198,7 +1269,7 @@ elif page == "🚇 Metro & Commute Map":
 
     # Overlay Selected Workplace Hub
     fig_map.add_trace(
-        go.Scattermapbox(
+        trace_cls(
             lat=[hub_lat],
             lon=[hub_lon],
             mode="markers+text",
