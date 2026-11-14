@@ -44,37 +44,45 @@ st.markdown(
         padding-bottom: 3rem;
         max-width: 1380px;
     }
+
+    /* Rich Midnight-Indigo Hero Masthead */
     .masthead {
-        border: 1px solid rgba(148, 163, 184, 0.25);
-        border-radius: 14px;
-        padding: 1.3rem 1.55rem;
-        margin-bottom: 1.2rem;
-        background: linear-gradient(135deg, rgba(30, 41, 59, 0.04) 0%, rgba(15, 23, 42, 0.01) 100%);
+        border: 1px solid #312e81;
+        border-radius: 16px;
+        padding: 1.55rem 1.85rem;
+        margin-bottom: 1.35rem;
+        background: linear-gradient(135deg, #1e1b4b 0%, #312e81 55%, #0f172a 100%);
+        box-shadow: 0 10px 25px -5px rgba(30, 27, 75, 0.25), 0 4px 10px -2px rgba(15, 23, 42, 0.15);
+        color: #ffffff;
     }
     .masthead-top {
         display: flex;
         justify-content: space-between;
-        align-items: flex-start;
+        align-items: center;
         flex-wrap: wrap;
-        gap: 1rem;
+        gap: 1.2rem;
     }
     .masthead-title {
-        font-size: 1.5rem;
-        font-weight: 700;
-        letter-spacing: -0.02em;
-        margin: 0 0 0.28rem 0;
-        line-height: 1.25;
+        font-size: 1.6rem;
+        font-weight: 800;
+        letter-spacing: -0.025em;
+        margin: 0 0 0.35rem 0;
+        line-height: 1.2;
+        color: #ffffff !important;
     }
     .masthead-sub {
-        font-size: 0.91rem;
-        opacity: 0.78;
+        font-size: 0.93rem;
+        color: #cbd5e1 !important;
         margin: 0;
         max-width: 760px;
-        line-height: 1.45;
+        line-height: 1.5;
+    }
+    .masthead-sub b {
+        color: #a5b4fc;
     }
     .masthead-actions {
         display: flex;
-        gap: 0.55rem;
+        gap: 0.65rem;
         flex-wrap: wrap;
         align-items: center;
     }
@@ -82,70 +90,103 @@ st.markdown(
         display: inline-flex;
         align-items: center;
         gap: 0.35rem;
-        padding: 0.42rem 0.88rem;
-        border-radius: 8px;
-        font-size: 0.82rem;
+        padding: 0.5rem 1rem;
+        border-radius: 9px;
+        font-size: 0.83rem;
         font-weight: 600;
         text-decoration: none !important;
-        transition: all 0.15s ease;
+        transition: all 0.18s ease;
     }
     .btn-primary {
-        background-color: #2563eb;
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
         color: #ffffff !important;
-        border: 1px solid #1d4ed8;
+        border: 1px solid #059669;
+        box-shadow: 0 2px 6px rgba(16, 185, 129, 0.35);
     }
     .btn-primary:hover {
-        background-color: #1d4ed8;
+        background: linear-gradient(135deg, #059669 0%, #047857 100%);
+        transform: translateY(-1px);
     }
     .btn-outline {
-        background-color: rgba(148, 163, 184, 0.1);
-        color: inherit !important;
-        border: 1px solid rgba(148, 163, 184, 0.32);
+        background-color: rgba(255, 255, 255, 0.12);
+        color: #f8fafc !important;
+        border: 1px solid rgba(255, 255, 255, 0.28);
+        backdrop-filter: blur(6px);
     }
     .btn-outline:hover {
-        background-color: rgba(148, 163, 184, 0.18);
+        background-color: rgba(255, 255, 255, 0.22);
+        border-color: rgba(255, 255, 255, 0.45);
     }
+
+    /* Elevated KPI Cards with Top Accent Bars */
     .kpi-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
-        gap: 0.85rem;
-        margin-bottom: 1.2rem;
+        grid-template-columns: repeat(auto-fit, minmax(195px, 1fr));
+        gap: 0.95rem;
+        margin-bottom: 1.35rem;
     }
     .kpi-box {
-        border: 1px solid rgba(148, 163, 184, 0.22);
-        border-radius: 10px;
-        padding: 0.85rem 1.05rem;
-        background-color: rgba(148, 163, 184, 0.03);
+        border: 1px solid #e2e8f0;
+        border-top: 4px solid #4f46e5;
+        border-radius: 12px;
+        padding: 0.95rem 1.15rem;
+        background-color: #ffffff;
+        box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05), 0 1px 2px rgba(15, 23, 42, 0.03);
+    }
+    .kpi-box-teal {
+        border-top-color: #0d9488;
+    }
+    .kpi-box-amber {
+        border-top-color: #f59e0b;
+    }
+    .kpi-box-emerald {
+        border-top-color: #10b981;
     }
     .kpi-label {
-        font-size: 0.74rem;
+        font-size: 0.73rem;
         text-transform: uppercase;
-        letter-spacing: 0.05em;
-        opacity: 0.68;
-        font-weight: 600;
-        margin-bottom: 0.22rem;
+        letter-spacing: 0.06em;
+        color: #64748b;
+        font-weight: 700;
+        margin-bottom: 0.28rem;
     }
     .kpi-val {
-        font-size: 1.32rem;
-        font-weight: 700;
-        letter-spacing: -0.01em;
+        font-size: 1.42rem;
+        font-weight: 800;
+        color: #0f172a;
+        letter-spacing: -0.02em;
         line-height: 1.2;
     }
     .kpi-sub {
-        font-size: 0.78rem;
-        opacity: 0.72;
-        margin-top: 0.2rem;
+        font-size: 0.79rem;
+        color: #64748b;
+        margin-top: 0.24rem;
+        font-weight: 500;
     }
+
+    /* Studio Property Listing Cards */
     .prop-card {
-        border: 1px solid rgba(148, 163, 184, 0.26);
-        border-radius: 12px;
-        padding: 1.25rem 1.4rem;
-        margin-bottom: 0.95rem;
-        background-color: rgba(148, 163, 184, 0.025);
-        transition: border-color 0.15s ease;
+        border: 1px solid #e2e8f0;
+        border-left: 5px solid #4f46e5;
+        border-radius: 14px;
+        padding: 1.3rem 1.5rem;
+        margin-bottom: 1.05rem;
+        background-color: #ffffff;
+        box-shadow: 0 2px 5px rgba(15, 23, 42, 0.04), 0 1px 2px rgba(15, 23, 42, 0.02);
+        transition: all 0.18s ease;
     }
     .prop-card:hover {
-        border-color: rgba(59, 130, 246, 0.5);
+        border-color: #cbd5e1;
+        box-shadow: 0 8px 20px -4px rgba(15, 23, 42, 0.08), 0 2px 6px -1px rgba(15, 23, 42, 0.04);
+    }
+    .prop-card-male {
+        border-left-color: #0284c7;
+    }
+    .prop-card-female {
+        border-left-color: #db2777;
+    }
+    .prop-card-colive {
+        border-left-color: #7c3aed;
     }
     .prop-header {
         display: flex;
@@ -153,13 +194,14 @@ st.markdown(
         align-items: flex-start;
         gap: 1rem;
         flex-wrap: wrap;
-        margin-bottom: 0.65rem;
+        margin-bottom: 0.7rem;
     }
     .prop-name {
-        font-size: 1.14rem;
-        font-weight: 700;
-        margin: 0 0 0.35rem 0;
-        letter-spacing: -0.01em;
+        font-size: 1.18rem;
+        font-weight: 750;
+        color: #0f172a;
+        margin: 0 0 0.4rem 0;
+        letter-spacing: -0.015em;
     }
     .prop-meta {
         display: flex;
@@ -167,132 +209,167 @@ st.markdown(
         gap: 0.45rem;
         align-items: center;
         font-size: 0.82rem;
-        opacity: 0.88;
+        color: #475569;
     }
     .prop-price-block {
         text-align: right;
-        min-width: 145px;
+        min-width: 155px;
     }
     .prop-price {
-        font-size: 1.3rem;
-        font-weight: 700;
-        color: #10b981;
+        font-size: 1.4rem;
+        font-weight: 800;
+        color: #0f172a;
         line-height: 1.15;
+        letter-spacing: -0.02em;
     }
     .prop-price-unit {
-        font-size: 0.78rem;
+        font-size: 0.8rem;
         font-weight: 500;
-        opacity: 0.75;
+        color: #64748b;
     }
     .prop-elec {
-        font-size: 0.75rem;
-        margin-top: 0.2rem;
-        font-weight: 500;
+        display: inline-block;
+        font-size: 0.74rem;
+        margin-top: 0.28rem;
+        padding: 0.14rem 0.55rem;
+        border-radius: 6px;
+        font-weight: 600;
     }
     .elec-inc {
-        color: #10b981;
+        background-color: #ecfdf5;
+        color: #047857;
+        border: 1px solid #a7f3d0;
     }
     .elec-sep {
-        color: #f59e0b;
+        background-color: #fffbeb;
+        color: #b45309;
+        border: 1px solid #fde68a;
     }
+
+    /* High-Contrast Semantic Badges */
     .badge {
         display: inline-block;
-        padding: 0.16rem 0.55rem;
+        padding: 0.18rem 0.6rem;
         border-radius: 6px;
         font-size: 0.75rem;
         font-weight: 600;
         line-height: 1.3;
     }
     .badge-area {
-        background-color: rgba(59, 130, 246, 0.14);
-        color: #3b82f6;
-        border: 1px solid rgba(59, 130, 246, 0.28);
+        background-color: #eef2ff;
+        color: #3730a3;
+        border: 1px solid #c7d2fe;
     }
     .badge-male {
-        background-color: rgba(14, 165, 233, 0.13);
-        color: #0ea5e9;
-        border: 1px solid rgba(14, 165, 233, 0.28);
+        background-color: #e0f2fe;
+        color: #0369a1;
+        border: 1px solid #bae6fd;
     }
     .badge-female {
-        background-color: rgba(236, 72, 153, 0.13);
-        color: #ec4899;
-        border: 1px solid rgba(236, 72, 153, 0.28);
+        background-color: #fce7f3;
+        color: #be185d;
+        border: 1px solid #fbcfe8;
     }
     .badge-colive {
-        background-color: rgba(139, 92, 246, 0.13);
-        color: #8b5cf6;
-        border: 1px solid rgba(139, 92, 246, 0.28);
+        background-color: #f3e8ff;
+        color: #6d28d9;
+        border: 1px solid #ddd6fe;
     }
     .badge-neutral {
-        background-color: rgba(148, 163, 184, 0.14);
-        border: 1px solid rgba(148, 163, 184, 0.28);
+        background-color: #f1f5f9;
+        color: #334155;
+        border: 1px solid #cbd5e1;
     }
+    .badge-commute {
+        background-color: #f0fdfa;
+        color: #0f766e;
+        border: 1px solid #99f6e4;
+    }
+
+    /* Structured Specs Strip */
     .specs-strip {
         display: flex;
         flex-wrap: wrap;
-        gap: 0.5rem 1.2rem;
-        padding: 0.55rem 0.8rem;
-        border-radius: 8px;
-        background-color: rgba(148, 163, 184, 0.06);
-        margin: 0.6rem 0;
-        font-size: 0.81rem;
+        gap: 0.55rem 1.35rem;
+        padding: 0.6rem 0.9rem;
+        border-radius: 9px;
+        background-color: #f8fafc;
+        border: 1px solid #e2e8f0;
+        margin: 0.65rem 0;
+        font-size: 0.82rem;
     }
     .spec-item {
         display: inline-flex;
         align-items: center;
-        gap: 0.3rem;
+        gap: 0.32rem;
     }
     .spec-label {
-        opacity: 0.68;
+        color: #64748b;
+        font-weight: 500;
     }
     .spec-val {
-        font-weight: 600;
+        color: #0f172a;
+        font-weight: 700;
     }
+    .spec-star {
+        color: #d97706;
+        font-weight: 700;
+    }
+
+    /* Feature & Warning Pills */
     .tag-row {
         display: flex;
         flex-wrap: wrap;
-        gap: 0.4rem;
-        margin: 0.55rem 0;
+        gap: 0.42rem;
+        margin: 0.6rem 0;
     }
     .tag-pos {
-        padding: 0.15rem 0.55rem;
-        border-radius: 999px;
-        font-size: 0.74rem;
-        font-weight: 500;
-        background-color: rgba(16, 185, 129, 0.11);
-        color: #10b981;
-        border: 1px solid rgba(16, 185, 129, 0.28);
-    }
-    .tag-warn {
-        padding: 0.15rem 0.55rem;
+        padding: 0.16rem 0.6rem;
         border-radius: 999px;
         font-size: 0.74rem;
         font-weight: 600;
-        background-color: rgba(239, 68, 68, 0.12);
-        color: #ef4444;
-        border: 1px solid rgba(239, 68, 68, 0.32);
+        background-color: #ecfdf5;
+        color: #065f46;
+        border: 1px solid #a7f3d0;
     }
+    .tag-warn {
+        padding: 0.16rem 0.6rem;
+        border-radius: 999px;
+        font-size: 0.74rem;
+        font-weight: 600;
+        background-color: #fef2f2;
+        color: #991b1b;
+        border: 1px solid #fecaca;
+    }
+
+    /* Review Quote Block */
     .review-box {
-        font-size: 0.89rem;
-        line-height: 1.55;
-        padding: 0.65rem 0.9rem;
-        border-left: 3px solid rgba(59, 130, 246, 0.45);
-        background-color: rgba(148, 163, 184, 0.04);
+        font-size: 0.9rem;
+        line-height: 1.6;
+        color: #1e293b;
+        padding: 0.75rem 1rem;
+        border-left: 3px solid #6366f1;
+        background-color: #f8fafc;
         border-radius: 0 8px 8px 0;
         margin: 0.65rem 0;
     }
+
+    /* Card Footer & Action Buttons */
     .prop-footer {
         display: flex;
         justify-content: space-between;
         align-items: center;
         flex-wrap: wrap;
-        gap: 0.6rem;
-        padding-top: 0.55rem;
-        border-top: 1px solid rgba(148, 163, 184, 0.15);
-        font-size: 0.78rem;
+        gap: 0.65rem;
+        padding-top: 0.65rem;
+        border-top: 1px solid #f1f5f9;
+        font-size: 0.79rem;
     }
     .prop-credit {
-        opacity: 0.68;
+        color: #64748b;
+    }
+    .prop-credit b {
+        color: #334155;
     }
     .prop-links {
         display: flex;
@@ -301,23 +378,36 @@ st.markdown(
     }
     .card-link {
         display: inline-block;
-        padding: 0.28rem 0.68rem;
-        border-radius: 6px;
+        padding: 0.32rem 0.75rem;
+        border-radius: 7px;
         font-size: 0.77rem;
         font-weight: 600;
         text-decoration: none !important;
-        border: 1px solid rgba(148, 163, 184, 0.32);
-        background-color: rgba(148, 163, 184, 0.08);
-        color: inherit !important;
+        border: 1px solid #cbd5e1;
+        background-color: #f8fafc;
+        color: #334155 !important;
+        transition: all 0.15s ease;
     }
     .card-link:hover {
-        border-color: #3b82f6;
-        color: #3b82f6 !important;
+        border-color: #4f46e5;
+        background-color: #eef2ff;
+        color: #4338ca !important;
+    }
+    .card-link-map {
+        border-color: #c7d2fe;
+        background-color: #eef2ff;
+        color: #4338ca !important;
+    }
+    .card-link-map:hover {
+        background-color: #e0e7ff;
     }
     .card-link-wa {
-        border-color: rgba(16, 185, 129, 0.4);
-        background-color: rgba(16, 185, 129, 0.1);
-        color: #10b981 !important;
+        border-color: #6ee7b7;
+        background-color: #ecfdf5;
+        color: #047857 !important;
+    }
+    .card-link-wa:hover {
+        background-color: #d1fae5;
     }
     </style>
     """,
@@ -902,20 +992,20 @@ with tab_directory:
             <div class="kpi-grid">
                 <div class="kpi-box">
                     <div class="kpi-label">Matching Listings</div>
-                    <div class="kpi-val">{len(fdf)} <span style="font-size:0.85rem;font-weight:500;opacity:0.65;">/ {len(df_all)} total</span></div>
+                    <div class="kpi-val">{len(fdf)} <span style="font-size:0.85rem;font-weight:500;color:#64748b;">/ {len(df_all)} total</span></div>
                     <div class="kpi-sub">{with_phone_cnt} with direct owner phone</div>
                 </div>
-                <div class="kpi-box">
+                <div class="kpi-box kpi-box-teal">
                     <div class="kpi-label">Median Monthly Rent</div>
                     <div class="kpi-val">₹{med_rent:,}</div>
                     <div class="kpi-sub">Average: ₹{avg_rent:,}/mo</div>
                 </div>
-                <div class="kpi-box">
+                <div class="kpi-box kpi-box-amber">
                     <div class="kpi-label">Resident Rating</div>
-                    <div class="kpi-val">{avg_rat:.2f} ★</div>
+                    <div class="kpi-val">{avg_rat:.2f} <span style="color:#d97706;">★</span></div>
                     <div class="kpi-sub">Food Quality Avg: {avg_fd:.1f} / 5</div>
                 </div>
-                <div class="kpi-box">
+                <div class="kpi-box kpi-box-emerald">
                     <div class="kpi-label">All-Inclusive Rent</div>
                     <div class="kpi-val">{elec_inc_pct}%</div>
                     <div class="kpi-sub">Include electricity in base rent</div>
@@ -1010,13 +1100,16 @@ with tab_directory:
 
                 if pg_type == "Men's PG":
                     type_badge = "<span class='badge badge-male'>Men's PG</span>"
+                    card_accent_cls = "prop-card prop-card-male"
                 elif pg_type == "Women's PG":
                     type_badge = "<span class='badge badge-female'>Women's PG</span>"
+                    card_accent_cls = "prop-card prop-card-female"
                 else:
                     type_badge = "<span class='badge badge-colive'>Co-Living</span>"
+                    card_accent_cls = "prop-card prop-card-colive"
 
                 commute_pill = (
-                    f"<span class='badge badge-neutral'>~{row['OfficeDistKm']} km to Office</span>"
+                    f"<span class='badge badge-commute'>~{row['OfficeDistKm']} km to Office</span>"
                     if pd.notna(row.get("OfficeDistKm"))
                     else ""
                 )
@@ -1042,13 +1135,13 @@ with tab_directory:
                     )
                     comment_html = f"<div class='review-box'>{formatted_comment}</div>"
                 else:
-                    comment_html = "<div style='font-size:0.83rem;opacity:0.6;margin:0.45rem 0;'>No written commentary submitted — structured ratings only.</div>"
+                    comment_html = "<div style='font-size:0.83rem;color:#64748b;margin:0.45rem 0;'>No written commentary submitted — structured ratings only.</div>"
 
                 date_str = row["SubmittedAt"].strftime("%b %d, %Y") if pd.notna(row["SubmittedAt"]) else "Community Verified"
                 contrib_esc = html.escape(str(row["Contributor"]))
 
                 action_links = [
-                    f"<a class='card-link' href='{row['MapsURL']}' target='_blank' rel='noopener'>Google Maps ↗</a>"
+                    f"<a class='card-link card-link-map' href='{row['MapsURL']}' target='_blank' rel='noopener'>Google Maps ↗</a>"
                 ]
                 if row["PhoneDigits"]:
                     action_links.append(
@@ -1058,11 +1151,11 @@ with tab_directory:
                         f"<a class='card-link' href='tel:+91{row['PhoneDigits']}'>Call {html.escape(row['Phone'])}</a>"
                     )
                 else:
-                    action_links.append("<span style='font-size:0.76rem;opacity:0.55;padding:0.25rem 0.4rem;'>No phone listed</span>")
+                    action_links.append("<span style='font-size:0.76rem;color:#94a3b8;padding:0.25rem 0.4rem;'>No phone listed</span>")
 
                 render_html(
                     f"""
-                    <div class="prop-card">
+                    <div class="{card_accent_cls}">
                         <div class="prop-header">
                             <div>
                                 <div class="prop-name">{name_esc}</div>
@@ -1080,11 +1173,11 @@ with tab_directory:
                             </div>
                         </div>
                         <div class="specs-strip">
-                            <div class="spec-item"><span class="spec-label">Overall Rating:</span> <span class="spec-val">{row['Rating']:.1f} / 5 ★</span></div>
+                            <div class="spec-item"><span class="spec-label">Overall Rating:</span> <span class="spec-val">{row['Rating']:.1f} / 5</span> <span class="spec-star">★</span></div>
                             <div class="spec-item"><span class="spec-label">Food Quality:</span> <span class="spec-val">{row['FoodRating']:.1f} / 5</span></div>
                             <div class="spec-item"><span class="spec-label">Room Space:</span> <span class="spec-val">{html.escape(row['RoomSpace'])}</span></div>
                             <div class="spec-item"><span class="spec-label">Parking:</span> <span class="spec-val">{html.escape(row['ParkingCategory'])}</span></div>
-                            <div class="spec-item"><span class="spec-label">Value Score:</span> <span class="spec-val">{row['ValueScore']:.1f} / 10</span></div>
+                            <div class="spec-item"><span class="spec-label">Value Score:</span> <span class="spec-val" style="color:#4f46e5;">{row['ValueScore']:.1f} / 10</span></div>
                         </div>
                         {tags_row_html}
                         {comment_html}
@@ -1188,13 +1281,13 @@ with tab_calculator:
 
         if quoted_rent <= p25:
             verdict = "Great Deal (Below 25th Percentile)"
-            verdict_color = "#10b981"
+            verdict_color = "#059669"
         elif quoted_rent <= p75:
             verdict = "Fair Market Rate (Within Typical Range)"
-            verdict_color = "#3b82f6"
+            verdict_color = "#4f46e5"
         else:
             verdict = f"Above Market Rate (+₹{diff:,} over median)"
-            verdict_color = "#ef4444"
+            verdict_color = "#dc2626"
 
         render_html(
             f"""
@@ -1204,17 +1297,17 @@ with tab_calculator:
                     <div class="kpi-val" style="color:{verdict_color};font-size:1.1rem;">{verdict}</div>
                     <div class="kpi-sub">{sample_note}</div>
                 </div>
-                <div class="kpi-box">
+                <div class="kpi-box kpi-box-emerald">
                     <div class="kpi-label">Budget Tier (25th Pct)</div>
                     <div class="kpi-val">₹{p25:,}/mo</div>
                     <div class="kpi-sub">Lower end of market</div>
                 </div>
-                <div class="kpi-box">
+                <div class="kpi-box kpi-box-teal">
                     <div class="kpi-label">Market Median</div>
                     <div class="kpi-val">₹{p50:,}/mo</div>
                     <div class="kpi-sub">Typical rent paid by residents</div>
                 </div>
-                <div class="kpi-box">
+                <div class="kpi-box kpi-box-amber">
                     <div class="kpi-label">Premium Tier (75th Pct)</div>
                     <div class="kpi-val">₹{p75:,}/mo</div>
                     <div class="kpi-sub">Co-living / AC / luxury stays</div>
@@ -1243,14 +1336,15 @@ with tab_calculator:
             barmode="group",
             text_auto=".0f",
             category_orders={"Sharing": ["Single", "Two Sharing", "Triple Sharing", "Four Sharing"]},
-            color_discrete_sequence=["#1e40af", "#3b82f6", "#10b981", "#f59e0b"],
+            color_discrete_sequence=["#312e81", "#4f46e5", "#0d9488", "#f59e0b"],
             labels={"Cost": "Median Monthly Rent (₹)", "Location": "Locality"},
         )
         fig_bar.update_layout(
             height=390,
-            paper_bgcolor="rgba(0,0,0,0)",
-            plot_bgcolor="rgba(0,0,0,0)",
-            margin=dict(l=10, r=10, t=10, b=10),
+            paper_bgcolor="#ffffff",
+            plot_bgcolor="#ffffff",
+            font=dict(color="#334155"),
+            margin=dict(l=12, r=12, t=12, b=12),
             legend=dict(orientation="h", yanchor="bottom", y=1.02, title=None),
         )
         st.plotly_chart(fig_bar, use_container_width=True)
@@ -1268,17 +1362,18 @@ with tab_calculator:
             hover_name="Name",
             hover_data=["Location", "Sharing", "Rating", "FoodRating", "Electricity"],
             color_discrete_map={
-                "Co-Living": "#8b5cf6",
-                "Men's PG": "#0ea5e9",
-                "Women's PG": "#ec4899",
+                "Co-Living": "#7c3aed",
+                "Men's PG": "#0284c7",
+                "Women's PG": "#db2777",
             },
             labels={"Cost": "Monthly Rent (₹)", "CompositeRating": "Composite Rating (Overall + Food)", "PGType": "Type"},
         )
         fig_scat.update_layout(
             height=390,
-            paper_bgcolor="rgba(0,0,0,0)",
-            plot_bgcolor="rgba(0,0,0,0)",
-            margin=dict(l=10, r=10, t=10, b=10),
+            paper_bgcolor="#ffffff",
+            plot_bgcolor="#ffffff",
+            font=dict(color="#334155"),
+            margin=dict(l=12, r=12, t=12, b=12),
             legend=dict(orientation="h", yanchor="bottom", y=1.02, title=None),
         )
         st.plotly_chart(fig_scat, use_container_width=True)
@@ -1295,15 +1390,16 @@ with tab_calculator:
             hover_name="Name",
             hover_data=["Location", "Sharing"],
             category_orders={"RoomSpace": ["Spacious", "Average", "Cramped"]},
-            color_discrete_sequence=["#10b981", "#3b82f6", "#ef4444"],
+            color_discrete_sequence=["#059669", "#4f46e5", "#dc2626"],
             labels={"RoomSpace": "Room Space Reported by Residents", "Cost": "Monthly Rent (₹)"},
         )
         fig_box.update_layout(
             height=360,
             showlegend=False,
-            paper_bgcolor="rgba(0,0,0,0)",
-            plot_bgcolor="rgba(0,0,0,0)",
-            margin=dict(l=10, r=10, t=10, b=10),
+            paper_bgcolor="#ffffff",
+            plot_bgcolor="#ffffff",
+            font=dict(color="#334155"),
+            margin=dict(l=12, r=12, t=12, b=12),
         )
         st.plotly_chart(fig_box, use_container_width=True)
 
