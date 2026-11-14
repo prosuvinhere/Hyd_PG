@@ -1,7 +1,9 @@
+import html
 import math
 import os
 import re
 from datetime import datetime
+from io import StringIO
 from urllib.parse import quote_plus
 
 import numpy as np
@@ -11,82 +13,337 @@ import plotly.graph_objects as go
 import requests
 import streamlit as st
 
-# ─────────────────────────────────────────────
-#  PAGE CONFIG & STYLING
-# ─────────────────────────────────────────────
+# ─────────────────────────────────────────────────────────────────────────────
+#  PAGE CONFIGURATION
+# ─────────────────────────────────────────────────────────────────────────────
 st.set_page_config(
-    page_title="Hyd Life | Hyderabad PG Directory & Market Intelligence",
+    page_title="Hyderabad PG Directory — Community Reviews & Rent Intelligence",
     page_icon="🏠",
     layout="wide",
     initial_sidebar_state="expanded",
 )
 
+# ─────────────────────────────────────────────────────────────────────────────
+#  DESIGN SYSTEM & CUSTOM CSS
+# ─────────────────────────────────────────────────────────────────────────────
 st.markdown(
     """
     <style>
-    .pg-card {
-        border: 1px solid rgba(128, 128, 128, 0.25);
-        border-radius: 12px;
-        padding: 1.15rem 1.35rem;
-        margin-bottom: 1rem;
-        background-color: rgba(128, 128, 128, 0.04);
+    /* Global layout refinements */
+    .block-container {
+        padding-top: 1.75rem;
+        padding-bottom: 3rem;
+        max-width: 1380px;
     }
-    .pg-title {
-        font-size: 1.18rem;
+
+    /* Top masthead */
+    .masthead {
+        border: 1px solid rgba(148, 163, 184, 0.25);
+        border-radius: 14px;
+        padding: 1.35rem 1.6rem;
+        margin-bottom: 1.25rem;
+        background: linear-gradient(135deg, rgba(30, 41, 59, 0.04) 0%, rgba(15, 23, 42, 0.01) 100%);
+    }
+    .masthead-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+    .masthead-title {
+        font-size: 1.55rem;
         font-weight: 700;
-        margin-bottom: 0.25rem;
+        letter-spacing: -0.02em;
+        margin: 0 0 0.3rem 0;
+        line-height: 1.25;
     }
-    .pg-subtitle {
-        font-size: 0.9rem;
-        opacity: 0.85;
-        margin-bottom: 0.65rem;
+    .masthead-sub {
+        font-size: 0.92rem;
+        opacity: 0.78;
+        margin: 0;
+        max-width: 760px;
+        line-height: 1.45;
     }
-    .tag-pill {
-        display: inline-block;
-        padding: 0.18rem 0.58rem;
-        margin: 0.15rem 0.25rem 0.15rem 0;
-        border-radius: 999px;
-        font-size: 0.78rem;
-        font-weight: 500;
-        background-color: rgba(59, 130, 246, 0.14);
-        border: 1px solid rgba(59, 130, 246, 0.32);
+    .masthead-actions {
+        display: flex;
+        gap: 0.55rem;
+        flex-wrap: wrap;
+        align-items: center;
     }
-    .tag-pill-warn {
-        display: inline-block;
-        padding: 0.18rem 0.58rem;
-        margin: 0.15rem 0.25rem 0.15rem 0;
-        border-radius: 999px;
-        font-size: 0.78rem;
-        font-weight: 500;
-        background-color: rgba(239, 68, 68, 0.14);
-        border: 1px solid rgba(239, 68, 68, 0.35);
-    }
-    .metric-pill {
-        display: inline-block;
-        padding: 0.22rem 0.65rem;
-        margin-right: 0.4rem;
-        margin-bottom: 0.35rem;
+    .btn-outline, .btn-primary {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        padding: 0.42rem 0.85rem;
         border-radius: 8px;
         font-size: 0.82rem;
         font-weight: 600;
-        background-color: rgba(16, 185, 129, 0.12);
-        border: 1px solid rgba(16, 185, 129, 0.3);
+        text-decoration: none !important;
+        transition: all 0.15s ease;
+    }
+    .btn-primary {
+        background-color: #2563eb;
+        color: #ffffff !important;
+        border: 1px solid #1d4ed8;
+    }
+    .btn-primary:hover {
+        background-color: #1d4ed8;
+    }
+    .btn-outline {
+        background-color: rgba(148, 163, 184, 0.1);
+        color: inherit !important;
+        border: 1px solid rgba(148, 163, 184, 0.32);
+    }
+    .btn-outline:hover {
+        background-color: rgba(148, 163, 184, 0.18);
+    }
+
+    /* Summary KPI strip */
+    .kpi-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+        gap: 0.85rem;
+        margin-bottom: 1.25rem;
+    }
+    .kpi-box {
+        border: 1px solid rgba(148, 163, 184, 0.22);
+        border-radius: 10px;
+        padding: 0.85rem 1.05rem;
+        background-color: rgba(148, 163, 184, 0.03);
+    }
+    .kpi-label {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        opacity: 0.68;
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+    }
+    .kpi-val {
+        font-size: 1.35rem;
+        font-weight: 700;
+        letter-spacing: -0.01em;
+        line-height: 1.2;
+    }
+    .kpi-sub {
+        font-size: 0.78rem;
+        opacity: 0.72;
+        margin-top: 0.2rem;
+    }
+
+    /* Property Listing Card */
+    .prop-card {
+        border: 1px solid rgba(148, 163, 184, 0.26);
+        border-radius: 12px;
+        padding: 1.25rem 1.4rem;
+        margin-bottom: 0.95rem;
+        background-color: rgba(148, 163, 184, 0.025);
+        transition: border-color 0.15s ease;
+    }
+    .prop-card:hover {
+        border-color: rgba(59, 130, 246, 0.5);
+    }
+    .prop-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 1rem;
+        flex-wrap: wrap;
+        margin-bottom: 0.65rem;
+    }
+    .prop-name {
+        font-size: 1.15rem;
+        font-weight: 700;
+        margin: 0 0 0.3rem 0;
+        letter-spacing: -0.01em;
+    }
+    .prop-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.45rem;
+        align-items: center;
+        font-size: 0.83rem;
+        opacity: 0.86;
+    }
+    .prop-price-block {
+        text-align: right;
+        min-width: 145px;
+    }
+    .prop-price {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #10b981;
+        line-height: 1.15;
+    }
+    .prop-price-unit {
+        font-size: 0.78rem;
+        font-weight: 500;
+        opacity: 0.75;
+    }
+    .prop-elec {
+        font-size: 0.75rem;
+        margin-top: 0.2rem;
+        font-weight: 500;
+    }
+    .elec-inc {
+        color: #10b981;
+    }
+    .elec-sep {
+        color: #f59e0b;
+    }
+
+    /* Badges & Pills */
+    .badge {
+        display: inline-block;
+        padding: 0.16rem 0.55rem;
+        border-radius: 6px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        line-height: 1.3;
+    }
+    .badge-area {
+        background-color: rgba(59, 130, 246, 0.14);
+        color: #3b82f6;
+        border: 1px solid rgba(59, 130, 246, 0.28);
+    }
+    .badge-male {
+        background-color: rgba(14, 165, 233, 0.13);
+        color: #0ea5e9;
+        border: 1px solid rgba(14, 165, 233, 0.28);
+    }
+    .badge-female {
+        background-color: rgba(236, 72, 153, 0.13);
+        color: #ec4899;
+        border: 1px solid rgba(236, 72, 153, 0.28);
+    }
+    .badge-colive {
+        background-color: rgba(139, 92, 246, 0.13);
+        color: #8b5cf6;
+        border: 1px solid rgba(139, 92, 246, 0.28);
+    }
+    .badge-neutral {
+        background-color: rgba(148, 163, 184, 0.14);
+        border: 1px solid rgba(148, 163, 184, 0.28);
+    }
+
+    /* Specs strip inside card */
+    .specs-strip {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem 1.15rem;
+        padding: 0.55rem 0.75rem;
+        border-radius: 8px;
+        background-color: rgba(148, 163, 184, 0.06);
+        margin: 0.6rem 0;
+        font-size: 0.81rem;
+    }
+    .spec-item {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+    }
+    .spec-label {
+        opacity: 0.68;
+    }
+    .spec-val {
+        font-weight: 600;
+    }
+
+    /* Feature & warning tags */
+    .tag-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.38rem;
+        margin: 0.55rem 0;
+    }
+    .tag-pos {
+        padding: 0.14rem 0.52rem;
+        border-radius: 999px;
+        font-size: 0.74rem;
+        font-weight: 500;
+        background-color: rgba(16, 185, 129, 0.11);
+        color: #10b981;
+        border: 1px solid rgba(16, 185, 129, 0.28);
+    }
+    .tag-warn {
+        padding: 0.14rem 0.52rem;
+        border-radius: 999px;
+        font-size: 0.74rem;
+        font-weight: 600;
+        background-color: rgba(239, 68, 68, 0.12);
+        color: #ef4444;
+        border: 1px solid rgba(239, 68, 68, 0.32);
+    }
+
+    /* Review text block */
+    .review-box {
+        font-size: 0.89rem;
+        line-height: 1.55;
+        padding: 0.65rem 0.85rem;
+        border-left: 3px solid rgba(59, 130, 246, 0.45);
+        background-color: rgba(148, 163, 184, 0.04);
+        border-radius: 0 8px 8px 0;
+        margin: 0.65rem 0;
+        white-space: pre-line;
+    }
+
+    /* Card footer */
+    .prop-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 0.6rem;
+        padding-top: 0.55rem;
+        border-top: 1px solid rgba(148, 163, 184, 0.15);
+        font-size: 0.78rem;
+    }
+    .prop-credit {
+        opacity: 0.68;
+    }
+    .prop-links {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+    .card-link {
+        display: inline-block;
+        padding: 0.28rem 0.68rem;
+        border-radius: 6px;
+        font-size: 0.77rem;
+        font-weight: 600;
+        text-decoration: none !important;
+        border: 1px solid rgba(148, 163, 184, 0.32);
+        background-color: rgba(148, 163, 184, 0.08);
+        color: inherit !important;
+    }
+    .card-link:hover {
+        border-color: #3b82f6;
+        color: #3b82f6 !important;
+    }
+    .card-link-wa {
+        border-color: rgba(16, 185, 129, 0.4);
+        background-color: rgba(16, 185, 129, 0.1);
+        color: #10b981 !important;
     }
     </style>
     """,
     unsafe_allow_html=True,
 )
 
-# ─────────────────────────────────────────────
-#  CONSTANTS & GEOSPATIAL REFERENCE DATA
-# ─────────────────────────────────────────────
+# ─────────────────────────────────────────────────────────────────────────────
+#  CONSTANTS & REFERENCE DATA
+# ─────────────────────────────────────────────────────────────────────────────
 SHEET_CSV_URL = (
     "https://docs.google.com/spreadsheets/d/"
     "1AW4EKm412u_UyYhf1swdhDsP5ikadr3XXeUTMrqvh4w/export?format=csv&gid=1856698473"
 )
+FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLScXRf8vHeXwMeAbY_QLGDjGYemxD6BClUGffeOTTcra_9IBcQ/viewform"
+SHEET_EDIT_URL = "https://docs.google.com/spreadsheets/d/1AW4EKm412u_UyYhf1swdhDsP5ikadr3XXeUTMrqvh4w/edit"
 LOCAL_CSV_PATH = os.path.join(os.path.dirname(__file__), "pg_data.csv")
 
-# Comprehensive coordinates for 30+ Hyderabad localities
+# Coordinates for 34 Hyderabad residential localities
 COORDS = {
     "Madhapur": (17.4483, 78.3915),
     "Gachibowli": (17.4401, 78.3489),
@@ -125,56 +382,52 @@ COORDS = {
     "Unknown": (17.4400, 78.3800),
 }
 
-# Major Hyderabad IT / Office Hubs for commute calculations
-IT_HUBS = {
-    "Mindspace / HITEC City": (17.4422, 78.3774),
-    "DLF Cyber City (Gachibowli)": (17.4485, 78.3548),
-    "Financial District / WaveRock": (17.4158, 78.3426),
-    "Knowledge City / Raidurg": (17.4344, 78.3827),
-    "Kondapur / Botanical Garden": (17.4567, 78.3522),
-    "Kokapet SEZ / Neopolis": (17.3926, 78.3321),
-    "Ameerpet / Begumpet Corridor": (17.4399, 78.4563),
+# Major employment hubs for commute distance calculation
+OFFICE_HUBS = {
+    "None (Don't filter by office)": None,
+    "Mindspace / Raheja IT Park (HITEC City)": (17.4422, 78.3774),
+    "DLF Cyber City / Gachibowli": (17.4485, 78.3548),
+    "Financial District / WaveRock / Nanakramguda": (17.4158, 78.3426),
+    "Knowledge City / Raidurg / T-Hub": (17.4344, 78.3827),
+    "Kondapur / Botanical Garden Rd": (17.4567, 78.3522),
+    "Kokapet SEZ / GAR Infobahn": (17.3926, 78.3321),
+    "Ameerpet / Begumpet Commercial Hub": (17.4399, 78.4563),
     "Pocharam / Infosys SEZ": (17.4418, 78.6472),
     "Adibatla / TCS SEZ": (17.2321, 78.5624),
 }
 
-# Key Hyderabad Metro Stations along Red, Blue, and Green Lines
 METRO_STATIONS = [
-    # Blue Line (Raidurg <-> Nagole)
     {"station": "Raidurg", "line": "Blue Line", "lat": 17.4422, "lon": 78.3774},
     {"station": "HITEC City", "line": "Blue Line", "lat": 17.4489, "lon": 78.3832},
     {"station": "Durgam Cheruvu", "line": "Blue Line", "lat": 17.4428, "lon": 78.3875},
     {"station": "Madhapur", "line": "Blue Line", "lat": 17.4372, "lon": 78.3983},
     {"station": "Peddamma Gudi", "line": "Blue Line", "lat": 17.4306, "lon": 78.4083},
     {"station": "Jubilee Hills Check Post", "line": "Blue Line", "lat": 17.4265, "lon": 78.4198},
-    {"station": "Ameerpet (Interchange)", "line": "Blue Line", "lat": 17.4357, "lon": 78.4446},
+    {"station": "Ameerpet", "line": "Blue Line", "lat": 17.4357, "lon": 78.4446},
     {"station": "Begumpet", "line": "Blue Line", "lat": 17.4439, "lon": 78.4607},
     {"station": "Secunderabad East", "line": "Blue Line", "lat": 17.4354, "lon": 78.5046},
     {"station": "Uppal", "line": "Blue Line", "lat": 17.4002, "lon": 78.5601},
     {"station": "Nagole", "line": "Blue Line", "lat": 17.3908, "lon": 78.5594},
-    # Red Line (Miyapur <-> LB Nagar)
     {"station": "Miyapur", "line": "Red Line", "lat": 17.4967, "lon": 78.3731},
     {"station": "JNTU College", "line": "Red Line", "lat": 17.4986, "lon": 78.3888},
     {"station": "KPHB Colony", "line": "Red Line", "lat": 17.4938, "lon": 78.4017},
     {"station": "Kukatpally", "line": "Red Line", "lat": 17.4851, "lon": 78.4095},
     {"station": "SR Nagar", "line": "Red Line", "lat": 17.4440, "lon": 78.4414},
     {"station": "Punjagutta", "line": "Red Line", "lat": 17.4286, "lon": 78.4510},
-    {"station": "MGBS (Interchange)", "line": "Red Line", "lat": 17.3788, "lon": 78.4800},
+    {"station": "MGBS", "line": "Red Line", "lat": 17.3788, "lon": 78.4800},
     {"station": "Dilsukhnagar", "line": "Red Line", "lat": 17.3685, "lon": 78.5257},
     {"station": "Chaitanyapuri", "line": "Red Line", "lat": 17.3682, "lon": 78.5361},
     {"station": "LB Nagar", "line": "Red Line", "lat": 17.3457, "lon": 78.5522},
-    # Green Line (JBS Parade Ground <-> MGBS)
     {"station": "JBS Parade Ground", "line": "Green Line", "lat": 17.4437, "lon": 78.4973},
     {"station": "RTC X Roads", "line": "Green Line", "lat": 17.4072, "lon": 78.4966},
     {"station": "Narayanguda", "line": "Green Line", "lat": 17.3944, "lon": 78.4900},
 ]
 
 
-# ─────────────────────────────────────────────
-#  HELPER & CLEANING FUNCTIONS
-# ─────────────────────────────────────────────
+# ─────────────────────────────────────────────────────────────────────────────
+#  DATA CLEANING & ENRICHMENT ENGINE
+# ─────────────────────────────────────────────────────────────────────────────
 def haversine_km(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
-    """Great-circle distance in kilometers between two lat/lon points."""
     r = 6371.0
     p1, p2 = math.radians(lat1), math.radians(lat2)
     dp = math.radians(lat2 - lat1)
@@ -184,13 +437,6 @@ def haversine_km(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
 
 
 def clean_cost(val) -> float:
-    """
-    Standardizes messy monthly rent inputs:
-    - Currency symbols & commas ('₹12,000' -> 12000)
-    - Ranges ('5000-6000' or '5k-6k' -> 5500)
-    - Shorthand in thousands ('8.5' -> 8500, '12.5' -> 12500, '22' -> 22000)
-    - Extra zero typos ('120000' -> 12000)
-    """
     if pd.isna(val):
         return 0.0
     s = str(val).lower().replace("₹", "").replace("rs", "").replace(",", "").strip()
@@ -210,7 +456,6 @@ def clean_cost(val) -> float:
         if is_k or (0 < num <= 65):
             num *= 1000.0
         elif num >= 65000:
-            # Fix accidental extra trailing zero (e.g., 120000 -> 12000)
             while num >= 65000:
                 num /= 10.0
         return num
@@ -225,10 +470,6 @@ def clean_cost(val) -> float:
 
 
 def normalize_location(raw_loc) -> tuple[str, str]:
-    """
-    Returns (CanonicalLocation, ExtractedMapURL).
-    Unifies spelling variants and extracts embedded Google Maps links.
-    """
     if pd.isna(raw_loc):
         return "Unknown", ""
     s = str(raw_loc).strip()
@@ -266,30 +507,28 @@ def normalize_location(raw_loc) -> tuple[str, str]:
 
 
 def normalize_pg_type(raw_type) -> str:
-    """Standardizes Type of PG into Male Only, Female Only, or Co-Living."""
     if pd.isna(raw_type):
         return "Co-Living"
     low = str(raw_type).lower()
     if "co living" in low or "coliving" in low or "both" in low:
         return "Co-Living"
     if "female" in low or "women" in low or "ladies" in low or "girl" in low:
-        return "Female Only"
+        return "Women's PG"
     if "male" in low or "men" in low or "boy" in low or "gents" in low:
-        return "Male Only"
+        return "Men's PG"
     return "Co-Living"
 
 
 def normalize_parking(raw_parking) -> str:
-    """Categorizes messy parking descriptions into clean filterable buckets."""
     if pd.isna(raw_parking) or not str(raw_parking).strip():
-        return "Unknown"
+        return "Not Specified"
     low = str(raw_parking).lower()
     if "no parking" in low and "infront" not in low and "front" not in low:
         return "No Parking"
     if "4-wheeler" in low or "4 wheeler" in low or "four wheeler" in low or "both" in low or "spacious" in low:
         return "2 & 4 Wheeler"
     if "congested" in low or "less space" in low:
-        return "2-Wheeler (Congested)"
+        return "2-Wheeler (Tight)"
     if "front" in low or "empty site" in low or "outside" in low:
         return "Street / Outside"
     if "2-wheeler" in low or "2 wheeler" in low:
@@ -298,10 +537,6 @@ def normalize_parking(raw_parking) -> str:
 
 
 def clean_phone(raw_phone) -> tuple[str, str]:
-    """
-    Cleans phone numbers (removes float '.0', '+91', leading '0') and returns:
-    (FormattedDisplayPhone, Raw10DigitForLinks).
-    """
     if pd.isna(raw_phone):
         return "Not Provided", ""
     s = str(raw_phone).strip()
@@ -319,78 +554,65 @@ def clean_phone(raw_phone) -> tuple[str, str]:
     return s, digits
 
 
-def extract_smart_tags(row: pd.Series) -> list[str]:
-    """
-    Smart Tagging Engine: scans review text and structured fields for positive
-    amenities and red-flag warnings.
-    """
+def extract_highlights_and_warnings(row: pd.Series) -> tuple[list[str], list[str]]:
+    """Extracts structured positive amenity highlights and red-flag warnings from reviews."""
     text = str(row.get("Comments", "")).lower()
-    tags = []
+    pos, warn = [], []
 
-    # Wi-Fi signals
+    # Wi-Fi
     if any(w in text for w in ["slow wifi", "slow wi-fi", "wifi is slow", "wi-fi speed can be slow", "wifi speed low", "ping is shit"]):
-        tags.append("🐢 Slow Wi-Fi")
+        warn.append("Slow Wi-Fi")
     elif any(w in text for w in ["wifi", "wi-fi", "internet"]):
-        tags.append("🚀 Good Wi-Fi")
+        pos.append("Reliable Wi-Fi")
 
-    # Transit & Metro
+    # Transit
     if any(w in text for w in ["metro", "bus stop", "public transport", "walkable", "walking distance"]):
-        tags.append("🚇 Near Transit/Metro")
+        pos.append("Walkable to Transit")
 
-    # Gym & Recreation
+    # Amenities
     if "no gym" not in text and any(w in text for w in ["gym", "fitness"]):
-        tags.append("🏋️ Gym")
+        pos.append("Gym")
     if "no game" not in text and any(w in text for w in ["pool table", "indoor games", "gaming zone", "box cricket", "play area"]):
-        tags.append("🎮 Games/Recreation")
-
-    # Room & Appliances
+        pos.append("Recreation Area")
     if any(w in text for w in [" ac ", " ac,", "ac room", "air condition", "fully furnished with ac", "ac 2", "ac 3"]):
-        tags.append("❄️ AC")
+        pos.append("AC Available")
     if any(w in text for w in ["washing machine", "laundry"]):
-        tags.append("🧺 Laundry/Washing")
+        pos.append("Washing Machine")
     if any(w in text for w in ["power backup", "inverter", "generator"]):
-        tags.append("🔋 Power Backup")
+        pos.append("Power Backup")
     if any(w in text for w in ["fridge", "self kitchen", "self cooking", "cook your own", "induction"]):
-        tags.append("🍳 Fridge/Self-Cook")
+        pos.append("Fridge / Self-Cook")
     if any(w in text for w in ["cctv", "fingerprint", "biometric", "security guard", "security uncle", "access card"]):
-        tags.append("🔒 CCTV/Security")
+        pos.append("Biometric / CCTV")
+    if any(w in text for w in ["clean daily", "daily cleaning", "very neat", "hygenic", "cleaned every"]):
+        pos.append("Regular Housekeeping")
 
-    # Structured attributes
-    if row.get("Electricity") == "Included in rent":
-        tags.append("⚡ Elec. Included")
-    if row.get("ParkingCategory") == "2 & 4 Wheeler":
-        tags.append("🚗 4W Parking")
-
-    # Red flags / Warnings
+    # Red flags
     if any(w in text for w in ["bed bug", "bedbug", "cockroach", "insects", "pest", "rot"]):
-        tags.append("⚠️ Pest Alert")
-    if any(w in text for w in ["rude", "horrible", "not give back the advance", "deposit", "micromanager", "trash"]):
-        tags.append("⚠️ Mgmt/Deposit Alert")
+        warn.append("Pest / Hygiene Issue")
+    if any(w in text for w in ["rude", "horrible", "not give back the advance", "micromanager", "trash"]):
+        warn.append("Management / Deposit Warning")
+    if any(w in text for w in ["no power backup", "lift keeps getting stuck", "turn off the lift"]):
+        warn.append("Lift / Backup Issue")
+    if any(w in text for w in ["signal", "network"]):
+        warn.append("Weak Mobile Network")
 
-    return tags
+    return pos, warn
 
 
-# ─────────────────────────────────────────────
-#  DATA LOADING & CACHING
-# ─────────────────────────────────────────────
-@st.cache_data(ttl=600, show_spinner="Loading & analyzing Hyderabad PG directory...")
+@st.cache_data(ttl=600, show_spinner="Loading Hyderabad PG directory...")
 def load_data() -> tuple[pd.DataFrame, str]:
-    """
-    Loads PG data from the live Google Sheet with automatic fallback to local pg_data.csv.
-    Returns (cleaned_dataframe, data_source_label).
-    """
     source_label = "Live Google Sheet"
     try:
         resp = requests.get(SHEET_CSV_URL, timeout=6)
         resp.raise_for_status()
-        from io import StringIO
         raw_df = pd.read_csv(StringIO(resp.text), dtype={"PG Owner Phone number": str})
     except Exception:
-        source_label = "Local Snapshot (pg_data.csv)"
+        source_label = "Local CSV Snapshot"
         if os.path.exists(LOCAL_CSV_PATH):
             raw_df = pd.read_csv(LOCAL_CSV_PATH, dtype={"PG Owner Phone number": str})
         else:
-            return pd.DataFrame(), "Unavailable"
+            return pd.DataFrame(), "Offline"
 
     df = raw_df.copy()
     df.columns = df.columns.str.strip()
@@ -414,7 +636,6 @@ def load_data() -> tuple[pd.DataFrame, str]:
         inplace=True,
     )
 
-    # Clean core fields
     df["Name"] = df["Name"].fillna("Unnamed PG").astype(str).str.strip()
     df["Cost"] = df["Cost"].apply(clean_cost)
     df = df[(df["Cost"] >= 2000) & (df["Cost"] <= 65000)].copy()
@@ -422,57 +643,62 @@ def load_data() -> tuple[pd.DataFrame, str]:
     df["Rating"] = pd.to_numeric(df["Rating"], errors="coerce").fillna(0.0).clip(0.0, 5.0)
     df["FoodRating"] = pd.to_numeric(df["FoodRating"], errors="coerce").fillna(0.0).clip(0.0, 5.0)
 
-    # Location & Map URLs
     loc_parsed = df["LocationRaw"].apply(normalize_location)
     df["Location"] = [item[0] for item in loc_parsed]
     df["ExtraMapURL"] = [item[1] for item in loc_parsed]
 
-    # PG Type (Male Only / Female Only / Co-Living)
     df["PGType"] = df["PGTypeRaw"].apply(normalize_pg_type)
-
-    # Sharing, Room Space, Electricity, Parking
     df["Sharing"] = df["Sharing"].fillna("Unknown").astype(str).str.strip()
     df["RoomSpace"] = df["RoomSpace"].fillna("Average").astype(str).str.strip()
     df["Electricity"] = df["Electricity"].fillna("Included in rent").astype(str).str.strip()
     df["ParkingRaw"] = df["ParkingRaw"].fillna("Not specified").astype(str).str.strip()
     df["ParkingCategory"] = df["ParkingRaw"].apply(normalize_parking)
 
-    # Comments, Contributor, Timestamp
+    # Estimated True Monthly Cost (adds ~₹800/mo buffer when electricity is billed separately)
+    df["EstTotalCost"] = np.where(df["Electricity"] == "Separate bill", df["Cost"] + 800, df["Cost"])
+
     df["Comments"] = df["Comments"].fillna("").astype(str).str.strip()
-    df["Contributor"] = df["Contributor"].fillna("Anonymous").astype(str).str.strip()
-    df["Contributor"] = df["Contributor"].replace({"": "Anonymous"})
+    df["Contributor"] = df["Contributor"].fillna("Anonymous").astype(str).str.strip().replace({"": "Anonymous"})
     df["SubmittedAt"] = pd.to_datetime(df.get("Timestamp"), errors="coerce")
 
-    # Phone numbers & links
     phone_parsed = df["PhoneRaw"].apply(clean_phone)
     df["Phone"] = [item[0] for item in phone_parsed]
     df["PhoneDigits"] = [item[1] for item in phone_parsed]
 
-    # Smart Tags
-    df["TagList"] = df.apply(extract_smart_tags, axis=1)
-    df["SmartTags"] = df["TagList"].apply(lambda tags: "  ".join(tags) if tags else "—")
+    hw_parsed = df.apply(extract_highlights_and_warnings, axis=1)
+    df["Highlights"] = [item[0] for item in hw_parsed]
+    df["Warnings"] = [item[1] for item in hw_parsed]
+    df["HighlightsStr"] = df["Highlights"].apply(lambda x: ", ".join(x) if x else "—")
+    df["WarningsStr"] = df["Warnings"].apply(lambda x: ", ".join(x) if x else "None")
 
-    # Value Score = ((Rating^2) / Cost) * 5000 (as documented in README)
+    # Composite Quality Score (70% Overall Rating + 30% Food Quality) & Value Index
+    df["CompositeRating"] = np.where(
+        df["FoodRating"] > 0,
+        (df["Rating"] * 0.7 + df["FoodRating"] * 0.3).round(2),
+        df["Rating"],
+    )
     df["ValueScore"] = np.where(
-        df["Cost"] > 0,
-        ((df["Rating"] ** 2) / df["Cost"]) * 5000.0,
+        df["EstTotalCost"] > 0,
+        ((df["CompositeRating"] ** 2) / df["EstTotalCost"]) * 5000.0,
         0.0,
     ).round(2)
 
-    # Deterministic Coordinates + Gaussian Jitter for visual separation
+    # Locality Coordinates + Deterministic Offset for Map Display
     rng = np.random.default_rng(42)
     base_coords = df["Location"].map(lambda loc: COORDS.get(loc, COORDS["Unknown"]))
-    df["lat"] = [c[0] for c in base_coords] + rng.normal(0, 0.0028, len(df))
-    df["lon"] = [c[1] for c in base_coords] + rng.normal(0, 0.0028, len(df))
+    df["AreaLat"] = [c[0] for c in base_coords]
+    df["AreaLon"] = [c[1] for c in base_coords]
+    df["lat"] = df["AreaLat"] + rng.normal(0, 0.0024, len(df))
+    df["lon"] = df["AreaLon"] + rng.normal(0, 0.0024, len(df))
 
-    # Nearest Metro Station & Distance
+    # Nearest Metro Station from Locality Center
     nearest_names, nearest_lines, nearest_dists = [], [], []
     for _, row in df.iterrows():
         best_st = min(
             METRO_STATIONS,
-            key=lambda st_item: haversine_km(row["lat"], row["lon"], st_item["lat"], st_item["lon"]),
+            key=lambda st_item: haversine_km(row["AreaLat"], row["AreaLon"], st_item["lat"], st_item["lon"]),
         )
-        dist = haversine_km(row["lat"], row["lon"], best_st["lat"], best_st["lon"])
+        dist = haversine_km(row["AreaLat"], row["AreaLon"], best_st["lat"], best_st["lon"])
         nearest_names.append(best_st["station"])
         nearest_lines.append(best_st["line"])
         nearest_dists.append(round(dist, 1))
@@ -481,7 +707,6 @@ def load_data() -> tuple[pd.DataFrame, str]:
     df["MetroLine"] = nearest_lines
     df["MetroDistKm"] = nearest_dists
 
-    # Google Maps search link
     df["MapsURL"] = df.apply(
         lambda r: r["ExtraMapURL"]
         if r["ExtraMapURL"]
@@ -492,9 +717,6 @@ def load_data() -> tuple[pd.DataFrame, str]:
     return df.reset_index(drop=True), source_label
 
 
-# ─────────────────────────────────────────────
-#  MONTHLY USERS COUNTER (NON-BLOCKING)
-# ─────────────────────────────────────────────
 def get_monthly_users() -> int:
     namespace = "hyderabad_pg_directory_reddit"
     current_month = datetime.now().strftime("%Y_%m")
@@ -504,7 +726,7 @@ def get_monthly_users() -> int:
     if "view_logged" not in st.session_state:
         st.session_state.view_logged = True
         try:
-            response = requests.get(f"{api_url}/up", timeout=2.5)
+            response = requests.get(f"{api_url}/up", timeout=2.0)
             if response.status_code == 200:
                 st.session_state.current_monthly_users = response.json().get("count", 0)
         except Exception:
@@ -512,745 +734,803 @@ def get_monthly_users() -> int:
     return st.session_state.get("current_monthly_users", 0)
 
 
-# ─────────────────────────────────────────────
-#  SIDEBAR NAVIGATION & STATUS
-# ─────────────────────────────────────────────
+# ─────────────────────────────────────────────────────────────────────────────
+#  LOAD DATA & SIDEBAR FILTER PANEL
+# ─────────────────────────────────────────────────────────────────────────────
 df_all, data_source = load_data()
 monthly_users = get_monthly_users()
 
+if df_all.empty:
+    st.error("Unable to load the PG directory dataset. Please verify your internet connection or local `pg_data.csv`.")
+    st.stop()
+
 with st.sidebar:
-    st.markdown("## 🏠 Hyd Life")
-    st.caption("Crowdsourced Hyderabad PG Directory & Market Intelligence")
+    st.markdown("### Search & Filter PGs")
+    st.caption("Narrow down listings by commute hub, neighborhood, room type, and budget.")
 
-    page = st.radio(
-        "Navigation",
-        [
-            "🔍 Search, Compare & Analytics",
-            "🚇 Metro & Commute Map",
-            "➕ Add a PG & Community Info",
-        ],
+    search_query = st.text_input(
+        "Keyword Search",
+        placeholder="PG name, landmark, Deloitte, AC, gym...",
+        help="Searches across PG names, localities, and full review comments.",
     )
 
-    st.divider()
-    st.markdown("**📡 Data Pipeline**")
-    st.caption(f"Source: `{data_source}`")
-    if not df_all.empty:
-        st.caption(
-            f"**{len(df_all)}** verified reviews across **{df_all['Location'].nunique()}** localities"
-        )
-    if st.button("🔄 Refresh Live Data", use_container_width=True):
-        st.cache_data.clear()
-        st.rerun()
+    sel_hub = st.selectbox(
+        "Commuting To (Office Hub)",
+        options=list(OFFICE_HUBS.keys()),
+        index=0,
+        help="Calculates straight-line distance from each PG's locality to your workplace.",
+    )
+    max_hub_km = None
+    if OFFICE_HUBS[sel_hub] is not None:
+        max_hub_km = st.slider("Max Distance to Office (km)", 1.0, 25.0, 8.0, 0.5)
 
-    st.divider()
-    st.metric("📅 Monthly Active Users", f"{monthly_users:,}" if monthly_users > 0 else "Live")
-    st.caption("100% community-driven by **r/hyderabad** • Zero brokers")
+    all_locs = sorted(df_all["Location"].unique().tolist())
+    sel_locs = st.multiselect("Localities", all_locs, default=[], placeholder="All Localities")
 
-
-# ══════════════════════════════════════════════
-#  PAGE 1: SEARCH, COMPARE & MARKET ANALYTICS
-# ══════════════════════════════════════════════
-if page == "🔍 Search, Compare & Analytics":
-    st.title("🏠 Hyderabad PG Finder & Market Intelligence")
-    st.markdown(
-        "Explore crowd-verified PGs & Co-Living spaces across Hyderabad with **Smart Review Tags**, "
-        "**Value-for-Money scoring**, **side-by-side comparison**, and **real-time market analytics**."
+    sel_pg_type = st.selectbox(
+        "Accommodation Type",
+        ["All Types", "Men's PG", "Women's PG", "Co-Living"],
     )
 
-    if df_all.empty:
-        st.error("Unable to load PG dataset. Please check your connection or `pg_data.csv`.")
-        st.stop()
+    sharing_order = ["Single", "Two Sharing", "Triple Sharing", "Four Sharing", "Five Sharing"]
+    avail_sharing = [s for s in sharing_order if s in df_all["Sharing"].unique()]
+    sel_sharing = st.multiselect("Room Sharing", avail_sharing, default=[], placeholder="Any Sharing")
 
-    # ── PRIMARY FILTERS ──
-    fcol1, fcol2, fcol3, fcol4, fcol5 = st.columns([1.4, 1.0, 1.0, 1.3, 1.0])
-    with fcol1:
-        all_locs = sorted(df_all["Location"].unique().tolist())
-        sel_loc = st.multiselect("📍 Locality / Area", all_locs, default=[], placeholder="All Areas")
-    with fcol2:
-        pg_types = ["Any", "Male Only", "Female Only", "Co-Living"]
-        sel_pg_type = st.selectbox("👥 PG Type", pg_types)
-    with fcol3:
-        sharing_order = ["Any", "Single", "Two Sharing", "Triple Sharing", "Four Sharing", "Five Sharing"]
-        avail_sharing = ["Any"] + [s for s in sharing_order[1:] if s in df_all["Sharing"].unique()]
-        sel_share = st.selectbox("🛏️ Room Sharing", avail_sharing)
-    with fcol4:
-        min_cost_val = int(df_all["Cost"].min() // 500 * 500)
-        max_cost_val = int(math.ceil(df_all["Cost"].max() / 500.0) * 500)
-        budget_range = st.slider(
-            "💰 Monthly Budget Range (₹)",
-            min_value=min_cost_val,
-            max_value=max_cost_val,
-            value=(min_cost_val, min(25000, max_cost_val)),
-            step=500,
-        )
-    with fcol5:
-        min_rat = st.slider("⭐ Min Overall Rating", 0.0, 5.0, 0.0, 0.5)
+    min_c = int(df_all["Cost"].min() // 500 * 500)
+    max_c = int(math.ceil(df_all["Cost"].max() / 500.0) * 500)
+    max_budget = st.slider(
+        "Max Monthly Rent (₹)",
+        min_value=min_c,
+        max_value=max_c,
+        value=min(25000, max_c),
+        step=500,
+    )
 
-    # ── SEARCH & ADVANCED FILTERS ──
-    scol1, scol2 = st.columns([2.2, 1.0])
-    with scol1:
-        search_query = st.text_input(
-            "🔎 Search by PG name, area, landmark, or review keywords (e.g., 'gym', 'metro', 'ac', 'deloitte', 'wifi')...",
-            placeholder="Type keywords to filter listings...",
-        )
-    with scol2:
-        sort_by = st.selectbox(
-            "🔃 Sort Listings By",
-            [
-                "Best Value Score (High → Low)",
-                "Overall Rating (High → Low)",
-                "Monthly Rent (Low → High)",
-                "Monthly Rent (High → Low)",
-                "Food Quality (High → Low)",
-                "Most Recent Submissions",
-            ],
-        )
+    col_r1, col_r2 = st.columns(2)
+    with col_r1:
+        min_rating = st.selectbox("Min Rating", [0.0, 3.0, 3.5, 4.0, 4.5], format_func=lambda x: "Any" if x == 0 else f"{x}+ ★")
+    with col_r2:
+        min_food = st.selectbox("Min Food", [0.0, 3.0, 4.0], format_func=lambda x: "Any" if x == 0 else f"{x}+ ★")
 
-    with st.expander("⚙️ Advanced Filters (Food Quality, Electricity, Room Space, Parking & Smart Tags)"):
-        acol1, acol2, acol3, acol4, acol5 = st.columns(5)
-        with acol1:
-            min_food = st.slider("🍴 Min Food Rating", 0.0, 5.0, 0.0, 0.5)
-        with acol2:
-            sel_elec = st.selectbox(
-                "⚡ Electricity Bill",
-                ["Any", "Included in rent", "Separate bill"],
-            )
-        with acol3:
-            sel_space = st.multiselect(
-                "🏢 Room Space",
-                ["Spacious", "Average", "Cramped"],
-                default=[],
-                placeholder="Any Space",
-            )
-        with acol4:
-            all_parking = sorted(df_all["ParkingCategory"].unique().tolist())
-            sel_parking = st.multiselect(
-                "🚲 Parking Availability",
-                all_parking,
-                default=[],
-                placeholder="Any Parking",
-            )
-        with acol5:
-            positive_tags = [
-                "🚀 Good Wi-Fi",
-                "🚇 Near Transit/Metro",
-                "🏋️ Gym",
-                "❄️ AC",
-                "🧺 Laundry/Washing",
-                "🔋 Power Backup",
-                "🍳 Fridge/Self-Cook",
-                "🔒 CCTV/Security",
-            ]
-            sel_tags = st.multiselect(
-                "🏷️ Must-Have Smart Tags",
-                positive_tags,
-                default=[],
-                placeholder="Select amenities...",
-            )
-        hide_red_flags = st.checkbox(
-            "🛡️ Hide listings with Pest or Management/Deposit warning tags",
-            value=False,
-        )
-
-    # ── APPLY FILTERS ──
-    fdf = df_all.copy()
-    if sel_loc:
-        fdf = fdf[fdf["Location"].isin(sel_loc)]
-    if sel_pg_type != "Any":
-        fdf = fdf[fdf["PGType"] == sel_pg_type]
-    if sel_share != "Any":
-        fdf = fdf[fdf["Sharing"] == sel_share]
-    fdf = fdf[(fdf["Cost"] >= budget_range[0]) & (fdf["Cost"] <= budget_range[1])]
-    fdf = fdf[(fdf["Rating"] >= min_rat) & (fdf["FoodRating"] >= min_food)]
-
-    if sel_elec != "Any":
-        fdf = fdf[fdf["Electricity"] == sel_elec]
-    if sel_space:
-        fdf = fdf[fdf["RoomSpace"].isin(sel_space)]
-    if sel_parking:
-        fdf = fdf[fdf["ParkingCategory"].isin(sel_parking)]
-    if sel_tags:
-        fdf = fdf[fdf["TagList"].apply(lambda tlist: all(tag in tlist for tag in sel_tags))]
-    if hide_red_flags:
-        fdf = fdf[
-            ~fdf["TagList"].apply(
-                lambda tlist: ("⚠️ Pest Alert" in tlist) or ("⚠️ Mgmt/Deposit Alert" in tlist)
-            )
-        ]
-
-    if search_query.strip():
-        q = search_query.strip()
-        mask = (
-            fdf["Name"].str.contains(q, case=False, na=False)
-            | fdf["Location"].str.contains(q, case=False, na=False)
-            | fdf["Comments"].str.contains(q, case=False, na=False)
-            | fdf["SmartTags"].str.contains(q, case=False, na=False)
-        )
-        fdf = fdf[mask]
-
-    # Sort logic
-    if sort_by == "Best Value Score (High → Low)":
-        fdf = fdf.sort_values(["ValueScore", "Rating", "Cost"], ascending=[False, False, True])
-    elif sort_by == "Overall Rating (High → Low)":
-        fdf = fdf.sort_values(["Rating", "FoodRating", "Cost"], ascending=[False, False, True])
-    elif sort_by == "Monthly Rent (Low → High)":
-        fdf = fdf.sort_values(["Cost", "Rating"], ascending=[True, False])
-    elif sort_by == "Monthly Rent (High → Low)":
-        fdf = fdf.sort_values(["Cost", "Rating"], ascending=[False, False])
-    elif sort_by == "Food Quality (High → Low)":
-        fdf = fdf.sort_values(["FoodRating", "Rating", "Cost"], ascending=[False, False, True])
-    elif sort_by == "Most Recent Submissions":
-        fdf = fdf.sort_values("SubmittedAt", ascending=False, na_position="last")
-
-    fdf = fdf.reset_index(drop=True)
+    st.markdown("**Preferences**")
+    only_elec_inc = st.checkbox("Electricity included in rent", value=False)
+    only_4w_parking = st.checkbox("4-Wheeler parking available", value=False)
+    hide_warnings = st.checkbox("Exclude listings with pest/deposit warnings", value=False)
 
     st.divider()
+    scol_a, scol_b = st.columns(2)
+    with scol_a:
+        st.caption(f"**Source:** {data_source}")
+        if monthly_users > 0:
+            st.caption(f"**Monthly Visits:** {monthly_users:,}")
+    with scol_b:
+        if st.button("Refresh Data", use_container_width=True):
+            st.cache_data.clear()
+            st.rerun()
 
+# ─────────────────────────────────────────────────────────────────────────────
+#  APPLY FILTERS & COMMUTE CALCULATIONS
+# ─────────────────────────────────────────────────────────────────────────────
+fdf = df_all.copy()
+
+if OFFICE_HUBS[sel_hub] is not None:
+    h_lat, h_lon = OFFICE_HUBS[sel_hub]
+    fdf["OfficeDistKm"] = fdf.apply(
+        lambda r: round(haversine_km(r["AreaLat"], r["AreaLon"], h_lat, h_lon), 1),
+        axis=1,
+    )
+    if max_hub_km is not None:
+        fdf = fdf[fdf["OfficeDistKm"] <= max_hub_km]
+else:
+    fdf["OfficeDistKm"] = np.nan
+
+if sel_locs:
+    fdf = fdf[fdf["Location"].isin(sel_locs)]
+if sel_pg_type != "All Types":
+    fdf = fdf[fdf["PGType"] == sel_pg_type]
+if sel_sharing:
+    fdf = fdf[fdf["Sharing"].isin(sel_sharing)]
+
+fdf = fdf[fdf["Cost"] <= max_budget]
+if min_rating > 0:
+    fdf = fdf[fdf["Rating"] >= min_rating]
+if min_food > 0:
+    fdf = fdf[fdf["FoodRating"] >= min_food]
+if only_elec_inc:
+    fdf = fdf[fdf["Electricity"] == "Included in rent"]
+if only_4w_parking:
+    fdf = fdf[fdf["ParkingCategory"] == "2 & 4 Wheeler"]
+if hide_warnings:
+    fdf = fdf[fdf["Warnings"].apply(len) == 0]
+
+if search_query.strip():
+    q = search_query.strip()
+    mask = (
+        fdf["Name"].str.contains(q, case=False, na=False)
+        | fdf["Location"].str.contains(q, case=False, na=False)
+        | fdf["Comments"].str.contains(q, case=False, na=False)
+        | fdf["HighlightsStr"].str.contains(q, case=False, na=False)
+    )
+    fdf = fdf[mask]
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+#  MASTHEAD BANNER
+# ─────────────────────────────────────────────────────────────────────────────
+st.markdown(
+    f"""
+    <div class="masthead">
+        <div class="masthead-top">
+            <div>
+                <div class="masthead-title">Hyderabad PG Directory & Rent Intelligence</div>
+                <p class="masthead-sub">
+                    Crowdsourced by the <b>r/hyderabad</b> community — {len(df_all)} verified resident reviews across
+                    {df_all['Location'].nunique()} neighborhoods with direct owner contacts, food ratings, and zero broker fees.
+                </p>
+            </div>
+            <div class="masthead-actions">
+                <a class="btn-primary" href="{FORM_URL}" target="_blank" rel="noopener">+ Submit a PG Review</a>
+                <a class="btn-outline" href="{SHEET_EDIT_URL}" target="_blank" rel="noopener">Raw Google Sheet ↗</a>
+            </div>
+        </div>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
+
+# ─────────────────────────────────────────────────────────────────────────────
+#  TOP-LEVEL NAVIGATION TABS
+# ─────────────────────────────────────────────────────────────────────────────
+tab_directory, tab_calculator, tab_compare, tab_map, tab_about = st.tabs(
+    [
+        f"Directory & Reviews ({len(fdf)})",
+        "Fair Rent Calculator & Market Insights",
+        "Compare Shortlist",
+        "Commute & Neighborhood Guide",
+        "About & Recent Submissions",
+    ]
+)
+
+
+# ═════════════════════════════════════════════════════════════════════════════
+#  TAB 1: DIRECTORY & REVIEWS
+# ═════════════════════════════════════════════════════════════════════════════
+with tab_directory:
     if fdf.empty:
-        st.warning("No PGs match your current filter criteria. Try widening your budget range or clearing a filter.")
-        st.stop()
+        st.info("No PGs match your current filter settings. Try increasing the budget slider or clearing sidebar filters.")
+    else:
+        # Compute KPI summary
+        med_rent = int(fdf["Cost"].median())
+        avg_rent = int(fdf["Cost"].mean())
+        rated_sub = fdf[fdf["Rating"] > 0]
+        avg_rat = rated_sub["Rating"].mean() if not rated_sub.empty else 0.0
+        avg_fd = fdf[fdf["FoodRating"] > 0]["FoodRating"].mean() if not fdf[fdf["FoodRating"] > 0].empty else 0.0
+        elec_inc_pct = int(round((fdf["Electricity"] == "Included in rent").mean() * 100))
+        with_phone_cnt = int((fdf["PhoneDigits"] != "").sum())
 
-    # ── KPI SUMMARY ROW ──
-    k1, k2, k3, k4, k5 = st.columns(5)
-    rated_pgs = fdf[fdf["Rating"] > 0]
-    avg_rent = fdf["Cost"].mean()
-    med_rent = fdf["Cost"].median()
-    avg_rating = rated_pgs["Rating"].mean() if not rated_pgs.empty else 0.0
-    avg_food = fdf[fdf["FoodRating"] > 0]["FoodRating"].mean() if not fdf[fdf["FoodRating"] > 0].empty else 0.0
-    try:
-        cheap_area = fdf.groupby("Location")["Cost"].median().idxmin()
-    except Exception:
-        cheap_area = "—"
-    top_val_pg = fdf.sort_values("ValueScore", ascending=False).iloc[0]["Name"]
+        st.markdown(
+            f"""
+            <div class="kpi-grid">
+                <div class="kpi-box">
+                    <div class="kpi-label">Matching Listings</div>
+                    <div class="kpi-val">{len(fdf)} <span style="font-size:0.85rem;font-weight:500;opacity:0.65;">/ {len(df_all)} total</span></div>
+                    <div class="kpi-sub">{with_phone_cnt} with direct owner phone</div>
+                </div>
+                <div class="kpi-box">
+                    <div class="kpi-label">Median Monthly Rent</div>
+                    <div class="kpi-val">₹{med_rent:,}</div>
+                    <div class="kpi-sub">Average: ₹{avg_rent:,}/mo</div>
+                </div>
+                <div class="kpi-box">
+                    <div class="kpi-label">Resident Rating</div>
+                    <div class="kpi-val">{avg_rat:.2f} ★</div>
+                    <div class="kpi-sub">Food Quality Avg: {avg_fd:.1f} / 5</div>
+                </div>
+                <div class="kpi-box">
+                    <div class="kpi-label">All-Inclusive Rent</div>
+                    <div class="kpi-val">{elec_inc_pct}%</div>
+                    <div class="kpi-sub">Include electricity in base rent</div>
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
 
-    k1.metric("Matching PGs", f"{len(fdf)}", f"{len(fdf) - len(df_all)} filtered" if len(fdf) != len(df_all) else "All listings")
-    k2.metric("Average / Median Rent", f"₹{int(avg_rent):,}", f"Median: ₹{int(med_rent):,}", delta_color="off")
-    k3.metric("Avg Overall Rating", f"{avg_rating:.2f} ⭐", f"Food Avg: {avg_food:.1f} 🍴", delta_color="off")
-    k4.metric("Most Affordable Hub", cheap_area)
-    k5.metric("Top Value Pick", top_val_pg[:22] + ("…" if len(top_val_pg) > 22 else ""))
-
-    st.write("")
-
-    # ── MAIN CONTENT TABS ──
-    tab_dir, tab_cards, tab_compare, tab_analytics = st.tabs(
-        [
-            f"📋 PG Directory Table ({len(fdf)})",
-            "🗂️ Detailed Review Cards",
-            "⚖️ Compare PGs Side-by-Side",
-            "📊 Market Analytics & Insights",
-        ]
-    )
-
-    # ── TAB 1: INTERACTIVE DIRECTORY TABLE ──
-    with tab_dir:
-        tcol1, tcol2 = st.columns([3, 1])
-        with tcol1:
-            st.caption(
-                "💡 **Tip:** Click any column header to sort, hover over truncated reviews to read the full text, "
-                "or click the **Maps** link to locate the PG on Google Maps."
+        # Controls Bar: Sort, View Switcher, Export
+        ctrl1, ctrl2, ctrl3 = st.columns([1.8, 1.4, 1.0])
+        with ctrl1:
+            sort_options = [
+                "Recommended (Best Value & Rating)",
+                "Highest Resident Rating",
+                "Lowest Monthly Rent",
+                "Highest Food Quality",
+                "Newest Reviews First",
+            ]
+            if OFFICE_HUBS[sel_hub] is not None:
+                sort_options.insert(0, "Closest to Selected Office Hub")
+            sort_choice = st.selectbox("Sort Listings By", sort_options, label_visibility="collapsed")
+        with ctrl2:
+            view_mode = st.radio(
+                "Display Mode",
+                ["Review Cards", "Compact Table"],
+                horizontal=True,
+                label_visibility="collapsed",
             )
-        with tcol2:
-            csv_bytes = fdf[
-                [
-                    "Name",
-                    "Location",
-                    "PGType",
-                    "Sharing",
-                    "Cost",
-                    "Rating",
-                    "FoodRating",
-                    "ValueScore",
-                    "RoomSpace",
-                    "Electricity",
-                    "ParkingCategory",
-                    "SmartTags",
-                    "Phone",
-                    "NearestMetro",
-                    "MetroDistKm",
-                    "Comments",
-                ]
-            ].to_csv(index=False).encode("utf-8")
+        with ctrl3:
+            export_cols = [
+                "Name",
+                "Location",
+                "PGType",
+                "Sharing",
+                "Cost",
+                "Electricity",
+                "Rating",
+                "FoodRating",
+                "RoomSpace",
+                "ParkingCategory",
+                "NearestMetro",
+                "MetroDistKm",
+                "Phone",
+                "HighlightsStr",
+                "WarningsStr",
+                "Comments",
+            ]
             st.download_button(
-                "📥 Export Filtered CSV",
-                data=csv_bytes,
-                file_name="hyderabad_pgs_filtered.csv",
+                "Export CSV",
+                data=fdf[export_cols].to_csv(index=False).encode("utf-8"),
+                file_name="hyderabad_pg_directory.csv",
                 mime="text/csv",
                 use_container_width=True,
             )
 
-        display_cols = [
-            "Name",
-            "Location",
-            "PGType",
-            "Sharing",
-            "Cost",
-            "Rating",
-            "FoodRating",
-            "ValueScore",
-            "SmartTags",
-            "RoomSpace",
-            "Electricity",
-            "ParkingCategory",
-            "Phone",
-            "MapsURL",
-            "Comments",
-        ]
+        # Apply Sorting
+        if sort_choice == "Closest to Selected Office Hub":
+            fdf = fdf.sort_values(["OfficeDistKm", "ValueScore"], ascending=[True, False])
+        elif sort_choice == "Recommended (Best Value & Rating)":
+            fdf = fdf.sort_values(["ValueScore", "CompositeRating", "Cost"], ascending=[False, False, True])
+        elif sort_choice == "Highest Resident Rating":
+            fdf = fdf.sort_values(["Rating", "FoodRating", "Cost"], ascending=[False, False, True])
+        elif sort_choice == "Lowest Monthly Rent":
+            fdf = fdf.sort_values(["Cost", "Rating"], ascending=[True, False])
+        elif sort_choice == "Highest Food Quality":
+            fdf = fdf.sort_values(["FoodRating", "Rating", "Cost"], ascending=[False, False, True])
+        elif sort_choice == "Newest Reviews First":
+            fdf = fdf.sort_values("SubmittedAt", ascending=False, na_position="last")
 
-        st.dataframe(
-            fdf[display_cols],
-            hide_index=True,
-            use_container_width=True,
-            height=520,
-            column_config={
-                "Name": st.column_config.TextColumn("PG / Hostel Name", width="medium"),
-                "Location": st.column_config.TextColumn("Area", width="small"),
-                "PGType": st.column_config.TextColumn("PG Type", width="small"),
-                "Sharing": st.column_config.TextColumn("Sharing", width="small"),
-                "Cost": st.column_config.NumberColumn("Rent / Mo", format="₹%d"),
-                "Rating": st.column_config.NumberColumn("Rating", format="%.1f ⭐"),
-                "FoodRating": st.column_config.NumberColumn("Food", format="%.1f 🍴"),
-                "ValueScore": st.column_config.ProgressColumn(
-                    "Value Score",
-                    help="Value Score = (Rating² / Monthly Cost) × 5000",
-                    format="%.1f",
-                    min_value=0,
-                    max_value=float(max(15.0, df_all["ValueScore"].max())),
-                ),
-                "SmartTags": st.column_config.TextColumn("Smart Tags", width="medium"),
-                "RoomSpace": st.column_config.TextColumn("Room Space", width="small"),
-                "Electricity": st.column_config.TextColumn("Electricity", width="small"),
-                "ParkingCategory": st.column_config.TextColumn("Parking", width="small"),
-                "Phone": st.column_config.TextColumn("Owner Phone", width="small"),
-                "MapsURL": st.column_config.LinkColumn("Map", display_text="📍 Open Map", width="small"),
-                "Comments": st.column_config.TextColumn("Community Review", width="large"),
-            },
-        )
+        fdf = fdf.reset_index(drop=True)
 
-    # ── TAB 2: DETAILED REVIEW CARDS ──
-    with tab_cards:
-        st.caption("Browse rich community review cards with extracted amenity tags, metro proximity, and direct owner contacts.")
-        page_size = 12
-        total_pages = max(1, math.ceil(len(fdf) / page_size))
-        pcol1, pcol2 = st.columns([1, 3])
-        with pcol1:
-            curr_page = st.number_input("Page", min_value=1, max_value=total_pages, value=1, step=1)
-        with pcol2:
-            st.write("")
-            st.caption(f"Showing listings {(curr_page - 1) * page_size + 1}–{min(curr_page * page_size, len(fdf))} of {len(fdf)}")
+        # ── VIEW A: STUDIO-GRADE PROPERTY REVIEW CARDS ──
+        if view_mode == "Review Cards":
+            page_size = 10
+            total_pages = max(1, math.ceil(len(fdf) / page_size))
+            pcol1, pcol2, pcol3 = st.columns([1.2, 2.0, 1.2])
+            with pcol1:
+                curr_page = st.number_input("Page", min_value=1, max_value=total_pages, value=1, step=1)
+            with pcol2:
+                st.write("")
+                start_i = (curr_page - 1) * page_size + 1
+                end_i = min(curr_page * page_size, len(fdf))
+                st.caption(f"Showing **{start_i}–{end_i}** of **{len(fdf)}** matching PGs")
 
-        subset = fdf.iloc[(curr_page - 1) * page_size : curr_page * page_size]
-        for idx, row in subset.iterrows():
-            tags_html = "".join(
-                f'<span class="{"tag-pill-warn" if "⚠️" in t else "tag-pill"}">{t}</span>'
-                for t in row["TagList"]
-            )
-            if not tags_html:
-                tags_html = '<span class="tag-pill">📝 Standard Listing</span>'
+            page_df = fdf.iloc[(curr_page - 1) * page_size : curr_page * page_size]
 
-            comment_body = (
-                row["Comments"].replace("\n", "<br>")
-                if row["Comments"]
-                else "<i>No written review comment provided by the contributor.</i>"
-            )
-            date_str = (
-                row["SubmittedAt"].strftime("%b %d, %Y")
-                if pd.notna(row["SubmittedAt"])
-                else "Community Submission"
-            )
-            phone_action = (
-                f"📞 **{row['Phone']}** · [💬 WhatsApp Owner](https://wa.me/91{row['PhoneDigits']})"
-                if row["PhoneDigits"]
-                else "📞 *Phone not provided*"
-            )
+            for _, row in page_df.iterrows():
+                name_esc = html.escape(str(row["Name"]))
+                loc_esc = html.escape(str(row["Location"]))
+                sharing_esc = html.escape(str(row["Sharing"]))
+                pg_type = str(row["PGType"])
 
-            st.markdown(
-                f"""
-                <div class="pg-card">
-                    <div class="pg-title">{row['Name']} — <span style="color:#10b981;">₹{int(row['Cost']):,}/mo</span></div>
-                    <div class="pg-subtitle">
-                        📍 <b>{row['Location']}</b> &nbsp;|&nbsp; 👥 <b>{row['PGType']}</b> &nbsp;|&nbsp; 🛏️ <b>{row['Sharing']}</b>
-                        &nbsp;|&nbsp; 🚇 ~{row['MetroDistKm']} km to <b>{row['NearestMetro']}</b> ({row['MetroLine']})
-                    </div>
-                    <div style="margin-bottom:0.6rem;">
-                        <span class="metric-pill">⭐ Overall: {row['Rating']:.1f}/5</span>
-                        <span class="metric-pill">🍴 Food: {row['FoodRating']:.1f}/5</span>
-                        <span class="metric-pill">💎 Value Score: {row['ValueScore']:.1f}</span>
-                        <span class="metric-pill">🏢 Space: {row['RoomSpace']}</span>
-                        <span class="metric-pill">⚡ {row['Electricity']}</span>
-                        <span class="metric-pill">🚲 Parking: {row['ParkingCategory']}</span>
-                    </div>
-                    <div style="margin-bottom:0.65rem;">{tags_html}</div>
-                    <div style="font-size:0.93rem; line-height:1.5; margin-bottom:0.6rem;">{comment_body}</div>
-                    <div style="font-size:0.8rem; opacity:0.75;">
-                        👤 Reviewed by <b>{row['Contributor']}</b> on {date_str}
-                    </div>
-                </div>
-                """,
-                unsafe_allow_html=True,
-            )
-            bcol1, bcol2, _ = st.columns([1.2, 2.2, 3])
-            with bcol1:
-                st.link_button("📍 View on Google Maps", row["MapsURL"], use_container_width=True)
-            with bcol2:
-                st.markdown(phone_action)
+                if pg_type == "Men's PG":
+                    type_badge = '<span class="badge badge-male">Men\'s PG</span>'
+                elif pg_type == "Women's PG":
+                    type_badge = '<span class="badge badge-female">Women\'s PG</span>'
+                else:
+                    type_badge = '<span class="badge badge-colive">Co-Living</span>'
 
-    # ── TAB 3: SIDE-BY-SIDE COMPARISON ──
-    with tab_compare:
-        st.subheader("⚖️ Compare PGs Side-by-Side")
-        st.caption("Select 2 to 4 PGs from your filtered results to compare rent, ratings, food quality, and amenities head-to-head.")
+                commute_pill = ""
+                if pd.notna(row.get("OfficeDistKm")):
+                    commute_pill = f'<span class="badge badge-neutral">~{row["OfficeDistKm"]} km to Office</span>'
 
-        fdf["CompareLabel"] = fdf.apply(
-            lambda r: f"{r['Name']} ({r['Location']} • {r['Sharing']} • ₹{int(r['Cost']):,})",
-            axis=1,
-        )
-        default_labels = fdf["CompareLabel"].head(min(3, len(fdf))).tolist()
-        selected_labels = st.multiselect(
-            "Select PGs to Compare (up to 4)",
-            options=fdf["CompareLabel"].tolist(),
-            default=default_labels,
-            max_selections=4,
-        )
-
-        if len(selected_labels) < 2:
-            st.info("Please select at least 2 PGs above to view the side-by-side comparison.")
-        else:
-            comp_df = fdf[fdf["CompareLabel"].isin(selected_labels)].copy()
-            cols = st.columns(len(comp_df))
-            for col_ui, (_, crow) in zip(cols, comp_df.iterrows()):
-                with col_ui:
-                    st.markdown(f"#### {crow['Name']}")
-                    st.caption(f"📍 {crow['Location']} • {crow['PGType']}")
-                    st.metric("Monthly Rent", f"₹{int(crow['Cost']):,}")
-                    st.metric("Value Score", f"{crow['ValueScore']:.2f}")
-                    st.markdown(
-                        f"""
-                        - **Sharing:** {crow['Sharing']}
-                        - **Overall Rating:** {crow['Rating']:.1f} / 5 ⭐
-                        - **Food Quality:** {crow['FoodRating']:.1f} / 5 🍴
-                        - **Room Space:** {crow['RoomSpace']}
-                        - **Electricity:** {crow['Electricity']}
-                        - **Parking:** {crow['ParkingCategory']}
-                        - **Nearest Metro:** {crow['NearestMetro']} (~{crow['MetroDistKm']} km)
-                        - **Phone:** {crow['Phone']}
-                        - **Smart Tags:** {crow['SmartTags']}
-                        """
-                    )
-                    with st.expander("Read Full Review"):
-                        st.write(crow["Comments"] if crow["Comments"] else "No comment provided.")
-                    st.link_button("📍 Open in Google Maps", crow["MapsURL"], use_container_width=True)
-
-            st.divider()
-            st.markdown("#### 📊 Multi-Metric Comparison Chart")
-            chart_df = comp_df[["Name", "Rating", "FoodRating", "ValueScore"]].melt(
-                id_vars="Name",
-                var_name="Metric",
-                value_name="Score",
-            )
-            fig_comp = px.bar(
-                chart_df,
-                x="Name",
-                y="Score",
-                color="Metric",
-                barmode="group",
-                text_auto=".1f",
-                color_discrete_sequence=["#3b82f6", "#10b981", "#f59e0b"],
-            )
-            fig_comp.update_layout(height=360, xaxis_title="", yaxis_title="Score")
-            st.plotly_chart(fig_comp, use_container_width=True)
-
-    # ── TAB 4: MARKET ANALYTICS & INSIGHTS ──
-    with tab_analytics:
-        st.caption(f"Real-time structural and pricing analytics across **{len(fdf)}** matching PG accommodations.")
-
-        r1c1, r1c2 = st.columns(2)
-        with r1c1:
-            st.subheader("💰 Monthly Rent Distribution by PG Type")
-            fig_hist = px.histogram(
-                fdf,
-                x="Cost",
-                color="PGType",
-                nbins=18,
-                marginal="box",
-                color_discrete_map={
-                    "Co-Living": "#6366f1",
-                    "Male Only": "#3b82f6",
-                    "Female Only": "#ec4899",
-                },
-                labels={"Cost": "Monthly Rent (₹)", "PGType": "PG Type"},
-            )
-            fig_hist.update_layout(height=380, bargap=0.08)
-            st.plotly_chart(fig_hist, use_container_width=True)
-
-        with r1c2:
-            st.subheader("🛏️ Room Sharing & Electricity Breakdown")
-            fig_sun = px.sunburst(
-                fdf,
-                path=["PGType", "Sharing", "Electricity"],
-                color="PGType",
-                color_discrete_map={
-                    "Co-Living": "#6366f1",
-                    "Male Only": "#3b82f6",
-                    "Female Only": "#ec4899",
-                },
-            )
-            fig_sun.update_layout(height=380)
-            st.plotly_chart(fig_sun, use_container_width=True)
-
-        st.divider()
-        r2c1, r2c2 = st.columns(2)
-        with r2c1:
-            st.subheader("📍 Average Monthly Rent by Locality")
-            area_stats = (
-                fdf.groupby("Location")
-                .agg(AvgCost=("Cost", "mean"), Count=("Name", "count"), AvgRating=("Rating", "mean"))
-                .reset_index()
-                .sort_values("AvgCost", ascending=True)
-            )
-            fig_bar = px.bar(
-                area_stats,
-                x="AvgCost",
-                y="Location",
-                orientation="h",
-                color="AvgRating",
-                color_continuous_scale="Viridis",
-                hover_data=["Count"],
-                text_auto=".0f",
-                labels={"AvgCost": "Average Rent (₹)", "Location": "Locality", "AvgRating": "Avg Rating"},
-            )
-            fig_bar.update_layout(height=420)
-            st.plotly_chart(fig_bar, use_container_width=True)
-
-        with r2c2:
-            st.subheader("📦 Rent Spread & Outliers by Top Localities")
-            top_locs = fdf["Location"].value_counts().head(10).index.tolist()
-            box_df = fdf[fdf["Location"].isin(top_locs)]
-            fig_box = px.box(
-                box_df,
-                x="Location",
-                y="Cost",
-                color="Location",
-                points="all",
-                hover_data=["Name", "Sharing", "PGType"],
-                labels={"Cost": "Monthly Rent (₹)", "Location": "Locality"},
-            )
-            fig_box.update_layout(height=420, showlegend=False)
-            st.plotly_chart(fig_box, use_container_width=True)
-
-        st.divider()
-        r3c1, r3c2 = st.columns(2)
-        with r3c1:
-            st.subheader("🎯 Price vs. Rating Matrix (Bubble Size = Food Quality)")
-            if not rated_pgs.empty:
-                scatter_df = rated_pgs.copy()
-                scatter_df["BubbleSize"] = scatter_df["FoodRating"].clip(lower=1.0) * 4
-                fig_scat = px.scatter(
-                    scatter_df,
-                    x="Cost",
-                    y="Rating",
-                    color="PGType",
-                    size="BubbleSize",
-                    hover_name="Name",
-                    hover_data=["Location", "Sharing", "FoodRating", "ValueScore", "Electricity"],
-                    color_discrete_map={
-                        "Co-Living": "#6366f1",
-                        "Male Only": "#3b82f6",
-                        "Female Only": "#ec4899",
-                    },
-                    labels={"Cost": "Monthly Rent (₹)", "Rating": "Overall Rating (1-5)"},
+                elec_is_inc = row["Electricity"] == "Included in rent"
+                elec_html = (
+                    '<div class="prop-elec elec-inc">✓ Electricity included</div>'
+                    if elec_is_inc
+                    else f'<div class="prop-elec elec-sep">+ Separate electricity (~₹{int(row["EstTotalCost"]):,}/mo est.)</div>'
                 )
-                fig_scat.update_layout(height=400)
-                st.plotly_chart(fig_scat, use_container_width=True)
-            else:
-                st.info("No rated PGs available for scatter visualization.")
 
-        with r3c2:
-            st.subheader("🏢 Room Space vs. Monthly Rent & Food Quality")
-            space_order = ["Spacious", "Average", "Cramped"]
-            fig_space = px.violin(
-                fdf,
-                x="RoomSpace",
-                y="Cost",
-                color="RoomSpace",
-                box=True,
-                points="all",
-                category_orders={"RoomSpace": space_order},
-                hover_data=["Name", "Location", "Sharing"],
-                labels={"RoomSpace": "Room Space Perception", "Cost": "Monthly Rent (₹)"},
-            )
-            fig_space.update_layout(height=400, showlegend=False)
-            st.plotly_chart(fig_space, use_container_width=True)
+                # Tags row
+                tags_parts = []
+                for h_tag in row["Highlights"]:
+                    tags_parts.append(f'<span class="tag-pos">✓ {html.escape(h_tag)}</span>')
+                for w_tag in row["Warnings"]:
+                    tags_parts.append(f'<span class="tag-warn">! {html.escape(w_tag)}</span>')
+                tags_row_html = f'<div class="tag-row">{"".join(tags_parts)}</div>' if tags_parts else ""
 
-        st.divider()
-        st.subheader("🏆 Top 10 Value-for-Money PGs (Rating² / Cost × 5000)")
-        if not rated_pgs.empty:
-            top_value = rated_pgs.sort_values(["ValueScore", "Rating", "FoodRating"], ascending=[False, False, False]).head(10)
+                # Review body
+                raw_comment = str(row["Comments"]).strip()
+                if raw_comment:
+                    comment_html = f'<div class="review-box">{html.escape(raw_comment)}</div>'
+                else:
+                    comment_html = '<div style="font-size:0.83rem;opacity:0.6;margin:0.45rem 0;">No written commentary submitted — structured ratings only.</div>'
+
+                # Footer links & contributor
+                date_str = row["SubmittedAt"].strftime("%b %d, %Y") if pd.notna(row["SubmittedAt"]) else "Community Verified"
+                contrib_esc = html.escape(str(row["Contributor"]))
+
+                action_links = [
+                    f'<a class="card-link" href="{row["MapsURL"]}" target="_blank" rel="noopener">Google Maps ↗</a>'
+                ]
+                if row["PhoneDigits"]:
+                    action_links.append(
+                        f'<a class="card-link card-link-wa" href="https://wa.me/91{row["PhoneDigits"]}" target="_blank" rel="noopener">WhatsApp Owner ↗</a>'
+                    )
+                    action_links.append(
+                        f'<a class="card-link" href="tel:+91{row["PhoneDigits"]}">Call {html.escape(row["Phone"])}</a>'
+                    )
+                else:
+                    action_links.append('<span style="font-size:0.76rem;opacity:0.55;padding:0.25rem 0.4rem;">No phone listed</span>')
+
+                st.markdown(
+                    f"""
+                    <div class="prop-card">
+                        <div class="prop-header">
+                            <div>
+                                <div class="prop-name">{name_esc}</div>
+                                <div class="prop-meta">
+                                    <span class="badge badge-area">{loc_esc}</span>
+                                    {type_badge}
+                                    <span class="badge badge-neutral">{sharing_esc}</span>
+                                    {commute_pill}
+                                    <span>• ~{row['MetroDistKm']} km to <b>{html.escape(row['NearestMetro'])} Metro</b></span>
+                                </div>
+                            </div>
+                            <div class="prop-price-block">
+                                <div class="prop-price">₹{int(row['Cost']):,}<span class="prop-price-unit">/mo</span></div>
+                                {elec_html}
+                            </div>
+                        </div>
+                        <div class="specs-strip">
+                            <div class="spec-item"><span class="spec-label">Overall Rating:</span> <span class="spec-val">{row['Rating']:.1f} / 5 ★</span></div>
+                            <div class="spec-item"><span class="spec-label">Food Quality:</span> <span class="spec-val">{row['FoodRating']:.1f} / 5</span></div>
+                            <div class="spec-item"><span class="spec-label">Room Space:</span> <span class="spec-val">{html.escape(row['RoomSpace'])}</span></div>
+                            <div class="spec-item"><span class="spec-label">Parking:</span> <span class="spec-val">{html.escape(row['ParkingCategory'])}</span></div>
+                            <div class="spec-item"><span class="spec-label">Value Index:</span> <span class="spec-val">{row['ValueScore']:.1f}</span></div>
+                        </div>
+                        {tags_row_html}
+                        {comment_html}
+                        <div class="prop-footer">
+                            <div class="prop-credit">Reviewed by <b>{contrib_esc}</b> • {date_str}</div>
+                            <div class="prop-links">{"".join(action_links)}</div>
+                        </div>
+                    </div>
+                    """,
+                    unsafe_allow_html=True,
+                )
+
+        # ── VIEW B: COMPACT DATA TABLE ──
+        else:
+            table_cols = [
+                "Name",
+                "Location",
+                "PGType",
+                "Sharing",
+                "Cost",
+                "Electricity",
+                "Rating",
+                "FoodRating",
+                "ValueScore",
+                "RoomSpace",
+                "ParkingCategory",
+                "NearestMetro",
+                "Phone",
+                "MapsURL",
+                "Comments",
+            ]
+            if OFFICE_HUBS[sel_hub] is not None:
+                table_cols.insert(2, "OfficeDistKm")
+
             st.dataframe(
-                top_value[
-                    [
-                        "Name",
-                        "Location",
-                        "PGType",
-                        "Sharing",
-                        "Cost",
-                        "Rating",
-                        "FoodRating",
-                        "ValueScore",
-                        "Electricity",
-                        "SmartTags",
-                        "Phone",
-                    ]
-                ],
+                fdf[table_cols],
                 hide_index=True,
                 use_container_width=True,
+                height=560,
                 column_config={
-                    "Cost": st.column_config.NumberColumn("Monthly Rent", format="₹%d"),
-                    "Rating": st.column_config.NumberColumn("Overall Rating", format="%.1f ⭐"),
-                    "FoodRating": st.column_config.NumberColumn("Food Quality", format="%.1f 🍴"),
+                    "Name": st.column_config.TextColumn("Property Name", width="medium"),
+                    "Location": st.column_config.TextColumn("Locality", width="small"),
+                    "OfficeDistKm": st.column_config.NumberColumn("Office Dist", format="%.1f km"),
+                    "PGType": st.column_config.TextColumn("Type", width="small"),
+                    "Sharing": st.column_config.TextColumn("Sharing", width="small"),
+                    "Cost": st.column_config.NumberColumn("Rent / Mo", format="₹%d"),
+                    "Electricity": st.column_config.TextColumn("Electricity", width="small"),
+                    "Rating": st.column_config.NumberColumn("Rating", format="%.1f ★"),
+                    "FoodRating": st.column_config.NumberColumn("Food", format="%.1f ★"),
                     "ValueScore": st.column_config.ProgressColumn(
-                        "Value Score",
-                        format="%.2f",
+                        "Value Index",
+                        format="%.1f",
                         min_value=0,
                         max_value=float(max(15.0, df_all["ValueScore"].max())),
                     ),
+                    "RoomSpace": st.column_config.TextColumn("Space", width="small"),
+                    "ParkingCategory": st.column_config.TextColumn("Parking", width="small"),
+                    "NearestMetro": st.column_config.TextColumn("Nearest Metro", width="small"),
+                    "Phone": st.column_config.TextColumn("Owner Phone", width="small"),
+                    "MapsURL": st.column_config.LinkColumn("Maps", display_text="Open Map ↗", width="small"),
+                    "Comments": st.column_config.TextColumn("Resident Review", width="large"),
                 },
             )
 
 
-# ══════════════════════════════════════════════
-#  PAGE 2: INTERACTIVE METRO & COMMUTE MAP
-# ══════════════════════════════════════════════
-elif page == "🚇 Metro & Commute Map":
-    st.title("🚇 Interactive Geospatial Map & IT Hub Commute Planner")
-    st.markdown(
-        "Visualize every PG alongside **Hyderabad Metro stations (Blue, Red, Green Lines)** and calculate "
-        "commute proximity to your office hub."
+# ═════════════════════════════════════════════════════════════════════════════
+#  TAB 2: FAIR RENT CALCULATOR & MARKET INSIGHTS
+# ═════════════════════════════════════════════════════════════════════════════
+with tab_calculator:
+    st.subheader("Fair Rent Benchmark Calculator — \"Am I Overpaying?\"")
+    st.caption(
+        "Check whether a quoted rent is fair compared to actual resident-reported rents in the same locality and room configuration."
     )
 
-    if df_all.empty:
-        st.stop()
+    bcol1, bcol2, bcol3, bcol4 = st.columns([1.3, 1.1, 1.1, 1.1])
+    with bcol1:
+        top_areas_for_calc = df_all["Location"].value_counts().index.tolist()
+        calc_loc = st.selectbox("Select Locality", ["All Hyderabad"] + top_areas_for_calc, index=1 if len(top_areas_for_calc) > 0 else 0)
+    with bcol2:
+        calc_sharing = st.selectbox("Select Room Sharing", ["Two Sharing", "Triple Sharing", "Four Sharing", "Single"], index=0)
+    with bcol3:
+        calc_type = st.selectbox("Accommodation Type", ["Any", "Men's PG", "Women's PG", "Co-Living"], index=0)
+    with bcol4:
+        quoted_rent = st.number_input("Quoted Monthly Rent (₹)", min_value=3000, max_value=50000, value=12000, step=500)
 
-    mcol1, mcol2, mcol3, mcol4 = st.columns([1.4, 1.0, 1.0, 1.0])
-    with mcol1:
-        work_hub = st.selectbox("🏢 Select Your Office / IT Hub", list(IT_HUBS.keys()))
-    with mcol2:
-        max_commute_km = st.slider("🚗 Max Distance to Hub (km)", 1.0, 25.0, 8.0, 0.5)
-    with mcol3:
-        map_pg_type = st.selectbox("👥 Filter PG Type", ["Any", "Male Only", "Female Only", "Co-Living"])
-    with mcol4:
-        color_mode = st.selectbox("🎨 Color Map Pins By", ["Monthly Rent (₹)", "Overall Rating", "PG Type"])
+    # Filter benchmark sample
+    bench_df = df_all[df_all["Sharing"] == calc_sharing].copy()
+    if calc_loc != "All Hyderabad":
+        bench_df = bench_df[bench_df["Location"] == calc_loc]
+    if calc_type != "Any":
+        bench_df = bench_df[bench_df["PGType"] == calc_type]
 
-    hub_lat, hub_lon = IT_HUBS[work_hub]
-    mdf = df_all.copy()
-    mdf["HubDistKm"] = mdf.apply(
-        lambda r: round(haversine_km(r["lat"], r["lon"], hub_lat, hub_lon), 1),
+    # Broaden to same sharing citywide if sample is very small (< 3)
+    sample_note = f"{len(bench_df)} exact matches in {calc_loc}"
+    if len(bench_df) < 3:
+        bench_df = df_all[df_all["Sharing"] == calc_sharing].copy()
+        sample_note = f"Citywide benchmark for {calc_sharing} ({len(bench_df)} listings; limited local sample in {calc_loc})"
+
+    if not bench_df.empty:
+        p25 = int(np.percentile(bench_df["Cost"], 25))
+        p50 = int(np.percentile(bench_df["Cost"], 50))
+        p75 = int(np.percentile(bench_df["Cost"], 75))
+        diff = quoted_rent - p50
+
+        if quoted_rent <= p25:
+            verdict = "Great Deal (Below 25th Percentile)"
+            verdict_color = "#10b981"
+        elif quoted_rent <= p75:
+            verdict = "Fair Market Rate (Within Typical Range)"
+            verdict_color = "#3b82f6"
+        else:
+            verdict = f"Above Market Rate (+₹{diff:,} over median)"
+            verdict_color = "#ef4444"
+
+        st.markdown(
+            f"""
+            <div class="kpi-grid" style="margin-top:0.5rem;">
+                <div class="kpi-box">
+                    <div class="kpi-label">Price Verdict</div>
+                    <div class="kpi-val" style="color:{verdict_color};font-size:1.1rem;">{verdict}</div>
+                    <div class="kpi-sub">{sample_note}</div>
+                </div>
+                <div class="kpi-box">
+                    <div class="kpi-label">Budget Tier (25th Pct)</div>
+                    <div class="kpi-val">₹{p25:,}/mo</div>
+                    <div class="kpi-sub">Lower end of market</div>
+                </div>
+                <div class="kpi-box">
+                    <div class="kpi-label">Market Median</div>
+                    <div class="kpi-val">₹{p50:,}/mo</div>
+                    <div class="kpi-sub">Typical rent paid by residents</div>
+                </div>
+                <div class="kpi-box">
+                    <div class="kpi-label">Premium Tier (75th Pct)</div>
+                    <div class="kpi-val">₹{p75:,}/mo</div>
+                    <div class="kpi-sub">Co-living / AC / luxury stays</div>
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+    st.divider()
+    st.subheader("Market Analytics & Pricing Structure")
+
+    c_chart1, c_chart2 = st.columns(2)
+    with c_chart1:
+        st.markdown("**Median Rent by Locality & Room Sharing (Top Hubs)**")
+        top8_locs = df_all["Location"].value_counts().head(8).index.tolist()
+        loc_share_df = (
+            df_all[df_all["Location"].isin(top8_locs) & df_all["Sharing"].isin(["Single", "Two Sharing", "Triple Sharing", "Four Sharing"])]
+            .groupby(["Location", "Sharing"], as_index=False)["Cost"]
+            .median()
+        )
+        fig_bar = px.bar(
+            loc_share_df,
+            x="Location",
+            y="Cost",
+            color="Sharing",
+            barmode="group",
+            text_auto=".0f",
+            category_orders={"Sharing": ["Single", "Two Sharing", "Triple Sharing", "Four Sharing"]},
+            color_discrete_sequence=["#1e40af", "#3b82f6", "#10b981", "#f59e0b"],
+            labels={"Cost": "Median Monthly Rent (₹)", "Location": "Locality"},
+        )
+        fig_bar.update_layout(
+            height=390,
+            paper_bgcolor="rgba(0,0,0,0)",
+            plot_bgcolor="rgba(0,0,0,0)",
+            margin=dict(l=10, r=10, t=10, b=10),
+            legend=dict(orientation="h", yanchor="bottom", y=1.02, title=None),
+        )
+        st.plotly_chart(fig_bar, use_container_width=True)
+
+    with c_chart2:
+        st.markdown("**Value Frontier: Monthly Rent vs. Resident Rating**")
+        rated_all = df_all[df_all["Rating"] > 0].copy()
+        rated_all["BubbleSize"] = rated_all["FoodRating"].clip(lower=1.0) * 3.5
+        fig_scat = px.scatter(
+            rated_all,
+            x="Cost",
+            y="CompositeRating",
+            color="PGType",
+            size="BubbleSize",
+            hover_name="Name",
+            hover_data=["Location", "Sharing", "Rating", "FoodRating", "Electricity"],
+            color_discrete_map={
+                "Co-Living": "#8b5cf6",
+                "Men's PG": "#0ea5e9",
+                "Women's PG": "#ec4899",
+            },
+            labels={"Cost": "Monthly Rent (₹)", "CompositeRating": "Composite Rating (Overall + Food)", "PGType": "Type"},
+        )
+        fig_scat.update_layout(
+            height=390,
+            paper_bgcolor="rgba(0,0,0,0)",
+            plot_bgcolor="rgba(0,0,0,0)",
+            margin=dict(l=10, r=10, t=10, b=10),
+            legend=dict(orientation="h", yanchor="bottom", y=1.02, title=None),
+        )
+        st.plotly_chart(fig_scat, use_container_width=True)
+
+    c_chart3, c_chart4 = st.columns(2)
+    with c_chart3:
+        st.markdown("**Rent Distribution by Room Space Perception**")
+        fig_box = px.box(
+            df_all,
+            x="RoomSpace",
+            y="Cost",
+            color="RoomSpace",
+            points="all",
+            hover_name="Name",
+            hover_data=["Location", "Sharing"],
+            category_orders={"RoomSpace": ["Spacious", "Average", "Cramped"]},
+            color_discrete_sequence=["#10b981", "#3b82f6", "#ef4444"],
+            labels={"RoomSpace": "Room Space Reported by Residents", "Cost": "Monthly Rent (₹)"},
+        )
+        fig_box.update_layout(
+            height=360,
+            showlegend=False,
+            paper_bgcolor="rgba(0,0,0,0)",
+            plot_bgcolor="rgba(0,0,0,0)",
+            margin=dict(l=10, r=10, t=10, b=10),
+        )
+        st.plotly_chart(fig_box, use_container_width=True)
+
+    with c_chart4:
+        st.markdown("**Top 10 Best Value-for-Money Stays (Rating ≥ 4.0)**")
+        best_val_df = (
+            df_all[(df_all["Rating"] >= 4.0) & (df_all["Warnings"].apply(len) == 0)]
+            .sort_values(["ValueScore", "CompositeRating"], ascending=[False, False])
+            .head(10)
+        )
+        st.dataframe(
+            best_val_df[["Name", "Location", "PGType", "Sharing", "Cost", "Rating", "FoodRating", "Phone"]],
+            hide_index=True,
+            use_container_width=True,
+            height=350,
+            column_config={
+                "Name": st.column_config.TextColumn("PG Name"),
+                "Location": st.column_config.TextColumn("Area"),
+                "PGType": st.column_config.TextColumn("Type"),
+                "Sharing": st.column_config.TextColumn("Sharing"),
+                "Cost": st.column_config.NumberColumn("Rent", format="₹%d"),
+                "Rating": st.column_config.NumberColumn("Rating", format="%.1f ★"),
+                "FoodRating": st.column_config.NumberColumn("Food", format="%.1f ★"),
+            },
+        )
+
+
+# ═════════════════════════════════════════════════════════════════════════════
+#  TAB 3: COMPARE SHORTLIST
+# ═════════════════════════════════════════════════════════════════════════════
+with tab_compare:
+    st.subheader("Side-by-Side PG Comparison")
+    st.caption("Select 2 to 4 properties to compare rent, estimated total cost with electricity, food quality, and resident reviews.")
+
+    source_pool = fdf if len(fdf) >= 2 else df_all
+    source_pool = source_pool.copy()
+    source_pool["OptionLabel"] = source_pool.apply(
+        lambda r: f"{r['Name']} — {r['Location']} ({r['Sharing']}, ₹{int(r['Cost']):,}/mo)",
         axis=1,
     )
-    if map_pg_type != "Any":
-        mdf = mdf[mdf["PGType"] == map_pg_type]
-    nearby_df = mdf[mdf["HubDistKm"] <= max_commute_km].sort_values(["HubDistKm", "ValueScore"], ascending=[True, False])
+    default_picks = source_pool["OptionLabel"].head(min(3, len(source_pool))).tolist()
+    chosen_labels = st.multiselect(
+        "Choose properties to compare (max 4)",
+        options=source_pool["OptionLabel"].tolist(),
+        default=default_picks,
+        max_selections=4,
+    )
 
-    # ── BUILD INTERACTIVE PLOTLY MAP (Supports Plotly 6+ MapLibre & Plotly 5 Mapbox) ──
-    color_col = {"Monthly Rent (₹)": "Cost", "Overall Rating": "Rating", "PG Type": "PGType"}[color_mode]
+    if len(chosen_labels) < 2:
+        st.info("Select at least 2 properties above to generate a side-by-side comparison.")
+    else:
+        comp_rows = source_pool[source_pool["OptionLabel"].isin(chosen_labels)].copy()
+
+        # Structured Comparison Matrix Table
+        matrix_records = []
+        spec_fields = [
+            ("Locality", "Location"),
+            ("Accommodation Type", "PGType"),
+            ("Room Sharing", "Sharing"),
+            ("Base Monthly Rent", lambda r: f"₹{int(r['Cost']):,}/mo"),
+            ("Electricity Billing", "Electricity"),
+            ("Est. All-In Monthly Cost", lambda r: f"₹{int(r['EstTotalCost']):,}/mo"),
+            ("Overall Resident Rating", lambda r: f"{r['Rating']:.1f} / 5.0 ★"),
+            ("Food Quality Rating", lambda r: f"{r['FoodRating']:.1f} / 5.0 ★"),
+            ("Value Index", lambda r: f"{r['ValueScore']:.1f}"),
+            ("Room Space", "RoomSpace"),
+            ("Parking", "ParkingCategory"),
+            ("Nearest Metro Station", lambda r: f"{r['NearestMetro']} (~{r['MetroDistKm']} km)"),
+            ("Highlights", "HighlightsStr"),
+            ("Reported Warnings", "WarningsStr"),
+            ("Owner Phone", "Phone"),
+        ]
+        for label_name, getter in spec_fields:
+            row_dict = {"Specification": label_name}
+            for idx_num, (_, r) in enumerate(comp_rows.iterrows(), start=1):
+                col_key = f"{idx_num}. {r['Name'][:26]}"
+                row_dict[col_key] = getter(r) if callable(getter) else str(r.get(getter, "—"))
+            matrix_records.append(row_dict)
+
+        st.dataframe(pd.DataFrame(matrix_records), hide_index=True, use_container_width=True)
+
+        st.markdown("#### Full Resident Reviews & Direct Links")
+        ui_cols = st.columns(len(comp_rows))
+        for col_ui, (_, crow) in zip(ui_cols, comp_rows.iterrows()):
+            with col_ui:
+                st.markdown(f"**{crow['Name']}**")
+                st.caption(f"{crow['Location']} • {crow['Sharing']} • ₹{int(crow['Cost']):,}/mo")
+                st.info(crow["Comments"] if crow["Comments"] else "No written review comment provided.")
+                st.link_button("Open in Google Maps ↗", crow["MapsURL"], use_container_width=True)
+                if crow["PhoneDigits"]:
+                    st.link_button(
+                        f"WhatsApp {crow['Phone']}",
+                        f"https://wa.me/91{crow['PhoneDigits']}",
+                        use_container_width=True,
+                    )
+
+
+# ═════════════════════════════════════════════════════════════════════════════
+#  TAB 4: COMMUTE & NEIGHBORHOOD GUIDE
+# ═════════════════════════════════════════════════════════════════════════════
+with tab_map:
+    st.subheader("Hyderabad Locality Guide & Transit Map")
+    st.caption(
+        "Compare neighborhoods by median rent, resident satisfaction, and distance to major IT corridors and Metro stations."
+    )
+
+    mctrl1, mctrl2 = st.columns([1.8, 1.2])
+    with mctrl1:
+        hub_choices = [k for k in OFFICE_HUBS.keys() if OFFICE_HUBS[k] is not None]
+        default_hub_idx = 0
+        if sel_hub in hub_choices:
+            default_hub_idx = hub_choices.index(sel_hub)
+        guide_hub = st.selectbox("Reference Office Hub for Commute Distance", hub_choices, index=default_hub_idx)
+    with mctrl2:
+        map_color_by = st.selectbox("Color Map Clusters By", ["Median Monthly Rent (₹)", "Average Resident Rating"])
+
+    g_lat, g_lon = OFFICE_HUBS[guide_hub]
+
+    # Build aggregated Neighborhood Guide DataFrame
+    area_summary = (
+        df_all.groupby("Location", as_index=False)
+        .agg(
+            Listings=("Name", "count"),
+            MedianRent=("Cost", "median"),
+            MinRent=("Cost", "min"),
+            MaxRent=("Cost", "max"),
+            AvgRating=("Rating", "mean"),
+            AvgFood=("FoodRating", "mean"),
+            AreaLat=("AreaLat", "first"),
+            AreaLon=("AreaLon", "first"),
+            NearestMetro=("NearestMetro", "first"),
+            MetroLine=("MetroLine", "first"),
+            MetroDistKm=("MetroDistKm", "first"),
+        )
+    )
+    area_summary["MedianRent"] = area_summary["MedianRent"].round(0).astype(int)
+    area_summary["AvgRating"] = area_summary["AvgRating"].round(2)
+    area_summary["AvgFood"] = area_summary["AvgFood"].round(2)
+    area_summary["OfficeDistKm"] = area_summary.apply(
+        lambda r: round(haversine_km(r["AreaLat"], r["AreaLon"], g_lat, g_lon), 1),
+        axis=1,
+    )
+
+    # Top PG per locality
+    top_pg_per_loc = (
+        df_all.sort_values(["CompositeRating", "ValueScore"], ascending=[False, False])
+        .groupby("Location", as_index=False)
+        .first()[["Location", "Name"]]
+        .rename(columns={"Name": "TopRatedPG"})
+    )
+    area_summary = area_summary.merge(top_pg_per_loc, on="Location", how="left")
+    area_summary = area_summary.sort_values(["OfficeDistKm", "Listings"], ascending=[True, False]).reset_index(drop=True)
+
+    # Interactive Map (Supports Plotly 6+ MapLibre and Plotly 5 Mapbox with pure go.Figure fallback)
+    color_field = "MedianRent" if map_color_by == "Median Monthly Rent (₹)" else "AvgRating"
     use_maplibre = hasattr(go, "Scattermap")
     trace_cls = go.Scattermap if use_maplibre else go.Scattermapbox
 
     try:
-        if hasattr(px, "scatter_map"):
-            fig_map = px.scatter_map(
-                mdf,
-                lat="lat",
-                lon="lon",
-                color=color_col,
-                hover_name="Name",
-                hover_data={
-                    "Location": True,
-                    "PGType": True,
-                    "Sharing": True,
-                    "Cost": ":₹,.0f",
-                    "Rating": ":.1f",
-                    "FoodRating": ":.1f",
-                    "NearestMetro": True,
-                    "MetroDistKm": True,
-                    "HubDistKm": True,
-                    "Phone": True,
-                    "lat": False,
-                    "lon": False,
-                },
-                zoom=11.2,
-                center={"lat": hub_lat, "lon": hub_lon},
-                height=560,
-                map_style="carto-positron",
-                color_continuous_scale="Plasma" if color_col == "Cost" else "Viridis",
-            )
-        else:
-            fig_map = px.scatter_mapbox(
-                mdf,
-                lat="lat",
-                lon="lon",
-                color=color_col,
-                hover_name="Name",
-                hover_data={
-                    "Location": True,
-                    "PGType": True,
-                    "Sharing": True,
-                    "Cost": ":₹,.0f",
-                    "Rating": ":.1f",
-                    "FoodRating": ":.1f",
-                    "NearestMetro": True,
-                    "MetroDistKm": True,
-                    "HubDistKm": True,
-                    "Phone": True,
-                    "lat": False,
-                    "lon": False,
-                },
-                zoom=11.2,
-                center={"lat": hub_lat, "lon": hub_lon},
-                height=560,
-                mapbox_style="carto-positron",
-                color_continuous_scale="Plasma" if color_col == "Cost" else "Viridis",
-            )
-        fig_map.update_traces(marker=dict(size=11, opacity=0.88))
-    except Exception:
-        hover_texts = mdf.apply(
-            lambda r: (
-                f"<b>{r['Name']}</b><br>"
-                f"Area: {r['Location']} ({r['PGType']} • {r['Sharing']})<br>"
-                f"Rent: ₹{int(r['Cost']):,}/mo | Rating: {r['Rating']:.1f}⭐ | Food: {r['FoodRating']:.1f}🍴<br>"
-                f"Nearest Metro: {r['NearestMetro']} ({r['MetroDistKm']} km)<br>"
-                f"Dist to {work_hub}: {r['HubDistKm']} km | Phone: {r['Phone']}"
-            ),
-            axis=1,
+        map_fn = px.scatter_map if hasattr(px, "scatter_map") else px.scatter_mapbox
+        style_kw = {"map_style": "carto-positron"} if hasattr(px, "scatter_map") else {"mapbox_style": "carto-positron"}
+        fig_map = map_fn(
+            area_summary,
+            lat="AreaLat",
+            lon="AreaLon",
+            size="Listings",
+            size_max=28,
+            color=color_field,
+            hover_name="Location",
+            hover_data={
+                "Listings": True,
+                "MedianRent": ":₹,.0f",
+                "AvgRating": ":.2f",
+                "AvgFood": ":.2f",
+                "OfficeDistKm": True,
+                "NearestMetro": True,
+                "TopRatedPG": True,
+                "AreaLat": False,
+                "AreaLon": False,
+            },
+            zoom=11.0,
+            center={"lat": g_lat, "lon": g_lon},
+            height=500,
+            color_continuous_scale="Plasma" if color_field == "MedianRent" else "Viridis",
+            **style_kw,
         )
+    except Exception:
         fig_map = go.Figure(
             trace_cls(
-                lat=mdf["lat"],
-                lon=mdf["lon"],
+                lat=area_summary["AreaLat"],
+                lon=area_summary["AreaLon"],
                 mode="markers",
-                name="🏠 PGs",
+                name="Localities",
                 marker=dict(
-                    size=11,
-                    opacity=0.88,
-                    color=mdf["Cost"] if color_col == "Cost" else mdf["Rating"],
-                    colorscale="Plasma" if color_col == "Cost" else "Viridis",
+                    size=np.clip(area_summary["Listings"] * 2 + 10, 10, 28),
+                    color=area_summary[color_field],
+                    colorscale="Plasma" if color_field == "MedianRent" else "Viridis",
                     showscale=True,
                 ),
-                text=hover_texts,
+                text=area_summary.apply(
+                    lambda r: f"<b>{r['Location']}</b> ({r['Listings']} PGs)<br>Median Rent: ₹{r['MedianRent']:,}/mo | Avg Rating: {r['AvgRating']}★<br>Dist to Office: {r['OfficeDistKm']} km",
+                    axis=1,
+                ),
                 hoverinfo="text",
             )
         )
         layout_key = "map" if use_maplibre else "mapbox"
         fig_map.update_layout(
-            **{
-                layout_key: dict(
-                    style="carto-positron",
-                    center=dict(lat=hub_lat, lon=hub_lon),
-                    zoom=11.2,
-                )
-            },
-            height=560,
+            **{layout_key: dict(style="carto-positron", center=dict(lat=g_lat, lon=g_lon), zoom=11.0)},
+            height=500,
         )
 
-    # Overlay Metro Lines & Stations
+    # Overlay Metro Lines
     metro_df = pd.DataFrame(METRO_STATIONS)
     line_colors = {"Blue Line": "#2563eb", "Red Line": "#dc2626", "Green Line": "#16a34a"}
     for line_name, ldf in metro_df.groupby("line", sort=False):
@@ -1259,23 +1539,23 @@ elif page == "🚇 Metro & Commute Map":
                 lat=ldf["lat"],
                 lon=ldf["lon"],
                 mode="lines+markers",
-                name=f"🚇 {line_name}",
-                line=dict(width=3, color=line_colors.get(line_name, "#2563eb")),
-                marker=dict(size=8, color=line_colors.get(line_name, "#2563eb")),
-                text=ldf["station"] + " Metro (" + ldf["line"] + ")",
+                name=f"Metro {line_name}",
+                line=dict(width=2.5, color=line_colors.get(line_name, "#2563eb")),
+                marker=dict(size=7, color=line_colors.get(line_name, "#2563eb")),
+                text=ldf["station"] + " Metro Station (" + ldf["line"] + ")",
                 hoverinfo="text",
             )
         )
 
-    # Overlay Selected Workplace Hub
+    # Overlay Reference Office Hub
     fig_map.add_trace(
         trace_cls(
-            lat=[hub_lat],
-            lon=[hub_lon],
+            lat=[g_lat],
+            lon=[g_lon],
             mode="markers+text",
-            name=f"🏢 {work_hub}",
-            marker=dict(size=18, color="#111827"),
-            text=[f"🏢 {work_hub}"],
+            name=f"Office: {guide_hub.split('(')[0].strip()}",
+            marker=dict(size=16, color="#0f172a"),
+            text=[guide_hub.split("(")[0].strip()],
             textposition="top right",
             hoverinfo="text",
         )
@@ -1284,132 +1564,93 @@ elif page == "🚇 Metro & Commute Map":
     fig_map.update_layout(margin=dict(l=0, r=0, t=10, b=0), legend=dict(orientation="h", yanchor="bottom", y=1.01))
     st.plotly_chart(fig_map, use_container_width=True)
 
-    # ── COMMUTE PLANNER RESULTS ──
-    st.subheader(f"📍 PGs within {max_commute_km:.1f} km of {work_hub} ({len(nearby_df)} matches)")
-    if nearby_df.empty:
-        st.info("No PGs found within this distance radius. Try increasing the max distance slider above.")
-    else:
+    st.markdown(f"#### Neighborhood Comparison Table (Sorted by Proximity to {guide_hub.split('(')[0].strip()})")
+    st.dataframe(
+        area_summary[
+            [
+                "Location",
+                "OfficeDistKm",
+                "Listings",
+                "MedianRent",
+                "AvgRating",
+                "AvgFood",
+                "NearestMetro",
+                "MetroDistKm",
+                "TopRatedPG",
+            ]
+        ],
+        hide_index=True,
+        use_container_width=True,
+        height=440,
+        column_config={
+            "Location": st.column_config.TextColumn("Neighborhood"),
+            "OfficeDistKm": st.column_config.NumberColumn("Dist to Office", format="%.1f km"),
+            "Listings": st.column_config.NumberColumn("Verified PGs", format="%d"),
+            "MedianRent": st.column_config.NumberColumn("Median Rent", format="₹%d/mo"),
+            "AvgRating": st.column_config.NumberColumn("Avg Rating", format="%.2f ★"),
+            "AvgFood": st.column_config.NumberColumn("Avg Food", format="%.2f ★"),
+            "NearestMetro": st.column_config.TextColumn("Nearest Metro"),
+            "MetroDistKm": st.column_config.NumberColumn("Metro Dist", format="%.1f km"),
+            "TopRatedPG": st.column_config.TextColumn("Top Rated PG in Area"),
+        },
+    )
+
+
+# ═════════════════════════════════════════════════════════════════════════════
+#  TAB 5: ABOUT & RECENT SUBMISSIONS
+# ═════════════════════════════════════════════════════════════════════════════
+with tab_about:
+    acol1, acol2 = st.columns([1.4, 1.0])
+    with acol1:
+        st.subheader("About the r/hyderabad PG Directory")
+        st.markdown(
+            """
+            Finding decent accommodation in Hyderabad often means dealing with inflated broker commissions,
+            misleading room photos, unreturned security deposits, and surprise electricity bills.
+
+            To make PG hunting transparent, members of the **r/hyderabad** Reddit community created an open,
+            crowdsourced ledger of PG and Co-Living reviews:
+
+            * **Initial Community Database:** [Let's build the ultimate Hyderabad PG database!](https://www.reddit.com/r/hyderabad/comments/1mzjwfj/lets_build_the_ultimate_hyderabad_pg_database/)
+            * **Live Dashboard Launch:** [I built a live dashboard to find PGs in Hyderabad](https://www.reddit.com/r/hyderabad/comments/1ppxvnz/i_built_a_live_dashboard_to_find_pgs_in_hyderabad/)
+
+            Every entry comes directly from a current or former resident—no sponsored placements and no middlemen.
+            """
+        )
+
+        st.markdown("#### Recent Resident Submissions")
+        recent_df = df_all.sort_values("SubmittedAt", ascending=False, na_position="last").head(10)
         st.dataframe(
-            nearby_df[
-                [
-                    "Name",
-                    "Location",
-                    "HubDistKm",
-                    "NearestMetro",
-                    "MetroDistKm",
-                    "PGType",
-                    "Sharing",
-                    "Cost",
-                    "Rating",
-                    "FoodRating",
-                    "ValueScore",
-                    "SmartTags",
-                    "Phone",
-                    "MapsURL",
-                ]
-            ],
+            recent_df[["Name", "Location", "PGType", "Sharing", "Cost", "Rating", "FoodRating", "Contributor"]],
             hide_index=True,
             use_container_width=True,
             column_config={
-                "HubDistKm": st.column_config.NumberColumn("Dist to Office", format="%.1f km"),
-                "NearestMetro": st.column_config.TextColumn("Nearest Metro"),
-                "MetroDistKm": st.column_config.NumberColumn("Metro Dist", format="%.1f km"),
-                "Cost": st.column_config.NumberColumn("Rent / Mo", format="₹%d"),
-                "Rating": st.column_config.NumberColumn("Rating", format="%.1f ⭐"),
-                "FoodRating": st.column_config.NumberColumn("Food", format="%.1f 🍴"),
-                "ValueScore": st.column_config.NumberColumn("Value Score", format="%.2f"),
-                "MapsURL": st.column_config.LinkColumn("Map", display_text="📍 Open Map"),
+                "Name": st.column_config.TextColumn("Property Name"),
+                "Location": st.column_config.TextColumn("Locality"),
+                "PGType": st.column_config.TextColumn("Type"),
+                "Sharing": st.column_config.TextColumn("Sharing"),
+                "Cost": st.column_config.NumberColumn("Rent", format="₹%d"),
+                "Rating": st.column_config.NumberColumn("Rating", format="%.1f ★"),
+                "FoodRating": st.column_config.NumberColumn("Food", format="%.1f ★"),
+                "Contributor": st.column_config.TextColumn("Reviewer"),
             },
         )
 
-    st.divider()
-    c_metro1, c_metro2 = st.columns([2, 1])
-    with c_metro1:
-        st.markdown(
-            """
-            ### 🚆 Hyderabad Metro Core Corridors
-            * **🔵 Blue Line (Raidurg ↔ Nagole):** Connects the Western IT Corridor (*Raidurg, HITEC City, Durgam Cheruvu, Madhapur, Jubilee Hills*) with *Ameerpet, Begumpet, Secunderabad, Uppal,* and *Nagole*.
-            * **🔴 Red Line (Miyapur ↔ LB Nagar):** Connects residential hubs (*Miyapur, JNTU, KPHB, Kukatpally, SR Nagar, Ameerpet*) with *Punjagutta, Narayanguda/MGBS, Dilsukhnagar,* and *LB Nagar*.
-            * **🟢 Green Line (JBS Parade Ground ↔ MGBS):** Connects *Secunderabad/Parade Ground, RTC X Roads, Narayanguda,* and *MG Bus Station*.
-            """
-        )
-    with c_metro2:
-        st.markdown("### 🗺️ Official Transit Map")
-        st.write("Check live L&T Hyderabad Metro timings, fare charts, and station facilities:")
-        st.link_button("Launch Official L&T Metro Map", "https://ltmetro.com/metro-network-map/", use_container_width=True)
-
-
-# ══════════════════════════════════════════════
-#  PAGE 3: ADD A PG & COMMUNITY INFO
-# ══════════════════════════════════════════════
-elif page == "➕ Add a PG & Community Info":
-    st.title("🤝 The Story Behind the r/hyderabad PG Directory")
-
-    st.markdown(
-        """
-        Finding a reliable PG in Hyderabad can be daunting. Between inflated broker fees, misleading listing photos,
-        unreturned security deposits, and hidden electricity charges, newcomers often struggle to find honest information.
-
-        To fix this, the **r/hyderabad** community came together to build a transparent, crowdsourced database of PG and Co-Living stays:
-
-        * **How it started:** Sparked by [this original r/hyderabad thread](https://www.reddit.com/r/hyderabad/comments/1mzjwfj/lets_build_the_ultimate_hyderabad_pg_database/), residents began sharing honest reviews, real rents, food quality ratings, and direct owner contacts.
-        * **How it evolved:** The static spreadsheet grew into this live analytics dashboard, launched in [this follow-up community post](https://www.reddit.com/r/hyderabad/comments/1ppxvnz/i_built_a_live_dashboard_to_find_pgs_in_hyderabad/).
-
-        **100% Community-Driven:** Zero brokers, zero sponsored listings, and full transparency.
-        """
-    )
-
-    st.divider()
-
-    col1, col2 = st.columns(2)
-    with col1:
-        st.subheader("📝 Submit Your PG Review")
+    with acol2:
+        st.subheader("Contribute Your Review")
         st.write(
-            "Help the next person moving to Hyderabad! Share your current or past PG's rent, food rating, "
-            "pros & cons, and owner contact via the official Google Form (auto-syncs with this dashboard)."
+            "Lived in a Hyderabad PG or Co-Living space? Share your honest rent, food quality score, and owner contact "
+            "to help newcomers avoid bad stays. Submissions sync automatically with this live directory."
         )
-        st.link_button(
-            "🚀 Launch PG Submission Form",
-            "https://docs.google.com/forms/d/e/1FAIpQLScXRf8vHeXwMeAbY_QLGDjGYemxD6BClUGffeOTTcra_9IBcQ/viewform",
-            use_container_width=True,
-        )
+        st.link_button("Submit a PG Review (Google Form) ↗", FORM_URL, use_container_width=True)
+        st.link_button("Inspect Raw Google Sheet ↗", SHEET_EDIT_URL, use_container_width=True)
 
-    with col2:
-        st.subheader("📂 Public Google Sheet & Reddit Threads")
-        st.write("Want to inspect the raw crowdsourced responses or run your own analysis?")
-        st.link_button(
-            "📊 Open Master Google Sheet",
-            "https://docs.google.com/spreadsheets/d/1AW4EKm412u_UyYhf1swdhDsP5ikadr3XXeUTMrqvh4w/edit",
-            use_container_width=True,
-        )
+        st.divider()
+        st.markdown("#### Methodology & Scoring")
         st.markdown(
             """
-            * [Reddit Thread Part 1: Let's build the ultimate Hyderabad PG database!](https://www.reddit.com/r/hyderabad/comments/1mzjwfj/lets_build_the_ultimate_hyderabad_pg_database/)
-            * [Reddit Thread Part 2: I built a live dashboard to find PGs in Hyderabad](https://www.reddit.com/r/hyderabad/comments/1ppxvnz/i_built_a_live_dashboard_to_find_pgs_in_hyderabad/)
+            * **Composite Rating:** Combines Overall Resident Rating ($70\\%$) and Food Quality Rating ($30\\%$).
+            * **Estimated All-In Cost:** Adds an ₹800/mo buffer when electricity is billed separately so you can compare all-inclusive vs. metered PGs fairly.
+            * **Value Index:** Calculated as $\\frac{\\text{Composite Rating}^2}{\\text{Est. All-In Cost}} \\times 5000$, rewarding well-rated PGs that are reasonably priced.
             """
         )
-
-    if not df_all.empty:
-        st.divider()
-        rcol1, rcol2 = st.columns([1.6, 1.0])
-        with rcol1:
-            st.subheader("🕒 Latest Community Submissions")
-            recent_df = df_all.sort_values("SubmittedAt", ascending=False, na_position="last").head(8)
-            st.dataframe(
-                recent_df[["Name", "Location", "PGType", "Sharing", "Cost", "Rating", "FoodRating", "Contributor"]],
-                hide_index=True,
-                use_container_width=True,
-                column_config={
-                    "Cost": st.column_config.NumberColumn("Rent", format="₹%d"),
-                    "Rating": st.column_config.NumberColumn("Rating", format="%.1f ⭐"),
-                    "FoodRating": st.column_config.NumberColumn("Food", format="%.1f 🍴"),
-                },
-            )
-        with rcol2:
-            st.subheader("🏅 Top Community Contributors")
-            named_contribs = df_all[df_all["Contributor"].str.lower() != "anonymous"]["Contributor"].value_counts().head(10).reset_index()
-            named_contribs.columns = ["Reddit Username", "Reviews Submitted"]
-            if not named_contribs.empty:
-                st.dataframe(named_contribs, hide_index=True, use_container_width=True)
-            else:
-                st.caption("Most contributors chose to remain Anonymous.")
